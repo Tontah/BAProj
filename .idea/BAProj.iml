@@ -8,9 +8,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="seedrandom" level="application" />
     <orderEntry type="library" name="json2csv" level="application" />
-    <orderEntry type="library" name="TagCloud" level="application" />
+    <orderEntry type="library" name="seedrandom" level="application" />
     <orderEntry type="library" name="TagCloud" level="application" />
   </component>
 </module>

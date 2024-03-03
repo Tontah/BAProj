@@ -1,17 +1,6 @@
+import {TagCloud} from "./TagCloud";
 import {words} from "./word";
 
-/*let identifiers = ["startTime", "extendAliasTable", "riverBank",
-    "movieTheaterTicket", "full_pathname", "get_next_path", "drive_fast",
-    "read_bedtime_story"]; // Array to hold identifiers
-let identifierAndDistractions = [
-    ["startTom", "smartTime", "startMime", "startTime"],
-    ["extendAlistTable", "expandAliasTable", "extendAliasTable", "extendAliasTitle"],
-    ["riserBank", "riverBank", "riverTank", "riverban"],
-    ["mouseTheaterTicket", "movieTheaterTicket", "movieThunderTicket", "movieTheaterTicker"],
-    ["full_pathnum", "fill_pathname", "full_mathname", "full_pathname"],
-    ["get_next_path", "got_next_path", "get_near_path", "gat_next_push"],
-    ["drive_last", "drove_fast", "drive_fast", "drive_fat"],
-    ["read_bedtime_store", "raid_bedtime_story", "read_bedsore_story", "read_bedtime_story"]]; // Array to hold identifiers and their distractors*/
 let identifier = "";
 let identifierAndDistractors =[];
 const mainPage = document.querySelector(".mainPage");
@@ -121,7 +110,7 @@ function showGame(){
     expButton.hidden = true;
     start = Date.now();
 
-    let tagCloud = TagCloud(content, shuffleArr(identifierAndDistractors),{
+    new TagCloud(content, shuffleArr(identifierAndDistractors),{
         // radius in px
         radius: 200,
         // animation speed(slow, normal, fast)

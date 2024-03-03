@@ -3,7 +3,7 @@
  * MIT License - https://github.com/cong-min/TagCloud
  */
 
-class TagCloud {
+export class TagCloud {
     /* constructor */
     constructor(container = document.body, texts, options) {
         const self = this;

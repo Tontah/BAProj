@@ -1,4 +1,4 @@
-export const
+export  const
     words = [
         "account",              "achiever",             "acoustics",            "act",                  "action",
         "activity",             "actor",                "addition",             "adjustment",           "advertisement",
