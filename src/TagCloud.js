@@ -38,7 +38,7 @@ export class TagCloud {
 
     // default config
     static _defaultConfig = {
-        radius: 100, // rolling radius, unit `px`
+        radius: 0, // rolling radius, unit `px`
         maxSpeed: 'normal', // rolling max speed, optional: `slow`, `normal`(default), `fast`
         initSpeed: 'normal', // rolling init speed, optional: `slow`, `normal`(default), `fast`
         direction: 135, // rolling init direction, unit clockwise `deg`, optional: `0`(top) , `90`(left), `135`(right-bottom)(default)...

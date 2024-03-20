@@ -3,14 +3,12 @@
 <head>
     <meta charset = "UTF-8">
     <title>Moving Text Experiment</title>
-<!--    <script src="https://cdn.jsdelivr.net/npm/TagCloud@2.2.0/dist/TagCloud.min.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <link rel="stylesheet" href="src/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 </head>
 <body>
-<div id = "experimentTitle">
+<div class = "experimentTitle">
     <h1>Moving Text Experiment</h1>
-    <p>Testing netlify build</p>
 </div>
 <div class = "mainPage">
     <p>This is a camelCase vs under_score identifier experiment.</p>
@@ -29,13 +27,17 @@
 <div class = "btn">
     <button id = "next">NEXT </button>
 </div>
-<div class = "expBtn">
-    <button id = "toExperiment">NEXT </button>
-</div>
 <div class = "downloadBtn">
     <button id = "downloadCSV">Results </button>
 </div>
-<div class = "content" ></div>
+
+<div class="content">
+    <div class="identifier0"></div>
+    <div class="identifier1"></div>
+    <div class="identifier2"></div>
+    <div class="identifier3"></div>
+</div>
+
 <script type="module" src="src/main.js"></script>
 </body>
 </html>

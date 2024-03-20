@@ -1,14 +1,97 @@
-
-
 body {
 }
-
 .content {
     font-family: "Poppins", sans-serif;
-    font-size: 40px;
-    margin: 100px 500px 750px 700px;
-    width: 100%;
+    font-size: 30px;
+    position: absolute;
+    /*margin: 100px 500px 750px 700px;*/
+    width: 80%;
+    height:50%;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+
 }
-.content.tagcloud--item:hover {
-    color: #36454F;
+/*
+.identifier0{
+    width: max-content;
+    height: max-content;
+    background-color: darkgray;
+    animation-name: animate-div0;
+    animation-duration: 20s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    position: relative;
 }
+.identifier1 {
+    width: max-content;
+    height: max-content;
+    background-color: darkgray;
+    animation-name: animate-div1;
+    animation-duration: 20s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    position: relative;
+}
+.identifier2 {
+    width: max-content;
+    height: max-content;
+    background-color: darkgray;
+    animation-name: animate-div2;
+    animation-duration: 20s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    position: relative;
+}
+.identifier3 {
+    width: max-content;
+    height: max-content;
+    background-color: darkgray;
+    animation-name: animate-div3;
+    animation-duration: 20s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    position: relative;
+}
+
+@keyframes animate-div0{
+    0%   {left:0%; top:50%;}
+    25%  {left:50%; top:0%;}
+    50%  {left:100%; bottom:50%;}
+    75%  {left:50%; top:100%;}
+    100% {left:0%; top:50%;}
+}
+@keyframes animate-div1{
+    0%   {left:90%; top:50%;}
+    25%  {left:50%; top:0%;}
+    50%  {left:50%; top:100%;}
+    75%  {left:0%; top:50%;}
+    100% {left:90%; top:50%;}
+}
+@keyframes animate-div2{
+    0%   {left:0%; top:0%;}
+    25%  {left:100%; top:100%;}
+    50%  {left:100%; top:0%;}
+    75%  {left:0%; top:100%;}
+    100% {left:0%; top:0%;}
+}
+@keyframes animate-div3{
+    0%   {left:0%; top:50%;}
+    25%  {left:0%; top:0%;}
+    50%  {left:50%; top:0%;}
+    75%  {left:100%; top:100%;}
+    100% {left:0%; top:50%;}
+}
+*/
+
+
+
+
