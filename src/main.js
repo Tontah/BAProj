@@ -18,18 +18,14 @@ let content = document.querySelector(".content");
 let experimentTitle = document.querySelector(".experimentTitle h1");
 let start = 0;
 let end = 0;
-let csvData = [["Style","number of Words","Answer","Time(ms)"]];
+let csvData = [["Style","Number of words","correct answer number","Key pressed","Answer","Time(ms)"]];
 let camelCase = 0;
 let underScore = 0;
 const identifierStyle = ["Camelcase", "Underscore"];
 const noOfWords = [2, 3];
 let csv = "";
 let rng = new Math.seedrandom("hello");
-let distractor1 = "";
-let distractor2 = "";
-let distractor3 = "";
 let style = "";
-const alphabet = [...'abcdefghijklmnopqrstuvwxyz'];
 let numberOfWords =0;
 const identifier0 = document.querySelector(".identifier0");
 const identifier1 = document.querySelector(".identifier1");
@@ -49,6 +45,9 @@ content.hidden = true;
 
 //function to show the identifier to be studied
 function showIdentifier(){
+    thirdWord = "";
+    identifier = "";
+    identifierAndDistractors.length = 0;
     mainPage.innerHTML = "";
     nextButton.disabled = true;
     nextButton.hidden = true;
@@ -66,51 +65,60 @@ function showIdentifier(){
     mainPage.appendChild(para2);
     mainPage.appendChild(para3);
     mainPage.appendChild(para4);
-    style = identifierStyle[getRandomInt(1000)%identifierStyle.length];
-   numberOfWords = noOfWords[getRandomInt(1000)%noOfWords.length];
+    style = identifierStyle[arrayPosition(identifierStyle.length)];
+   numberOfWords = noOfWords[arrayPosition(noOfWords.length)];
     for (let i = 0; i < numberOfWords; i++) {
-        let position = rng.int32() % words.length;
-        if (position < 0) {
-            position = -1 * position;
-        }
-        if(words[position].length>3) {
+        let word = words[arrayPosition(words.length)];
+        if(word.length>3) {
             if (style === "Camelcase" && camelCase < 150) {
                 if (i !== 0) {
-                    identifier = identifier + words[position].charAt(0).toUpperCase() + words[position].slice(1);
+                    identifier = identifier + word.charAt(0).toUpperCase() + word.slice(1);
                     if (i === 1) {
-                        secondWord = words[position];
+                        secondWord = word;
                     } else if (i === 2) {
-                        thirdWord = words[position];
+                        thirdWord = word;
                         console.log("identifier = " + identifier);
                     }
                 } else {
-                    identifier = words[position];
-                    firstWord = words[position];
+                    identifier = word;
+                    firstWord = word;
                 }
             } else {
                 if (style === "Camelcase") {
                     style = "Underscore";
                 }
                 if (i !== 0) {
-                    identifier = identifier + "_" + words[position];
+                    identifier = identifier + "_" + word;
                     if (i === 1) {
-                        secondWord = words[position];
+                        secondWord = word;
                     } else if (i === 2) {
-                        thirdWord = words[position];
-                        console.log("identifier = " + identifier);
+                        thirdWord = word;
                     }
                 } else {
-                    identifier = words[position];
-                    firstWord = words[position];
+                    identifier = word;
+                    firstWord = word;
                 }
-            }
+            }console.log("identifier is "+ identifier);
+        }
+        else{
+            i--;
         }
     }
     if(style === "Underscore"){
         underScore++;
     }
     else {camelCase++;}
-    generateDistractors(firstWord, secondWord, thirdWord, style);
+    identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistractor(style,
+        generateFirstDistractor(firstWord, thirdWord),secondWord,thirdWord)),identifierAndDistractors.length));
+    identifierAndDistractors.push(new IdentifierAndAttributes(style,(buildDistractor(style,firstWord,
+        generateSecondDistractor(secondWord, thirdWord),thirdWord)),identifierAndDistractors.length));
+    if(numberOfWords === 2){
+        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistractor(style,firstWord,
+            generateThirdDistractor(secondWord, thirdWord), thirdWord)),identifierAndDistractors.length));
+    }else {
+        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistractor(style,
+            firstWord, secondWord, generateThirdDistractor(secondWord, thirdWord))), identifierAndDistractors.length));
+    }
     identifierAndDistractors.push(new IdentifierAndAttributes(style,identifier,identifierAndDistractors.length));
 
     let nodeForH1 = document.createTextNode(firstWord + " " + secondWord + " " + thirdWord);
@@ -128,7 +136,7 @@ function showGame(){
     content.disabled = false;
     content.hidden = false;
     let shuffledArray = shuffleArr(identifierAndDistractors);
-    const elementArr = [identifier0, identifier1, identifier2, identifier3];
+    const elementArr = [identifier0, identifier1,identifier2, identifier3];
     for (let i = 0; i < elementArr.length; i++) {
         let para1 = document.createElement("p");
         let para2 = document.createElement("p");
@@ -152,8 +160,6 @@ document.addEventListener("keydown",e =>{
 });
 document.addEventListener("keydown", keydownEventHandler);
 
-
-
 downloadButton.addEventListener("click",()=> {
     downloadButton.disabled = false;
     downloadButton.hidden = false;
@@ -170,8 +176,9 @@ downloadButton.addEventListener("click",()=> {
 
 
 function keydownEventHandler(e) {
-    let arr = [];
     let answer = false;
+    let arr = [];
+    let rightAnswerPosition =0
     if (e.key === "0") {
         end =Date.now();
         answer = (identifierAndDistractors[0].identifierValue === identifier);
@@ -190,10 +197,20 @@ function keydownEventHandler(e) {
     }
     else {e.preventDefault();
         return false;}
+    if (e.key === "Enter") {
+        showGame();
+    }
+    else{
+        for (let i = 0; i <identifierAndDistractors.length ; i++) {
+            if(identifierAndDistractors[i].identifierValue === identifier){
+                rightAnswerPosition = identifierAndDistractors[i].arrayPosition;
+            }
+        }
+    }
 
-    arr.push(style, numberOfWords, answer, (end-start));
+    arr.push(style,numberOfWords,rightAnswerPosition,e.key, answer, (end-start));
         csvData.push(arr);
-        if(camelCase+underScore === 300){
+        if(camelCase+underScore === 10){
             experimentTitle.innerText = "Moving Text Experiment";
             document.removeEventListener("keydown", keydownEventHandler);
             mainPage.hidden = false;
@@ -210,6 +227,7 @@ function keydownEventHandler(e) {
             content.hidden =true;
         }
         else{
+            experimentTitle.innerText = "Moving Text Experiment";
             mainPage.hidden = false;
             identifierToStudy.hidden =false;
             identifier0.textContent = "";
@@ -227,178 +245,220 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-
-
-function generateDistractors(firstWord, secondWord, thirdWord, style){
-    identifierAndDistractors = [];
+function generateFirstDistractor(firstWord, thirdWord){
     let difference = 0;
-    let distractorWord ="";
-    distractor1 ="";
-    distractor2 = "";
-    distractor3 = "";
-    if(thirdWord === "") {
+    let distractorWord = "";
+    let wordLength =firstWord.length;
+    let distractors = [[],[],[],[],[]]
+    if (thirdWord === ""){
         for (let i = 0; i < dictionary.length; i++) {
             distractorWord = dictionary[i];
             difference = 0;
             //changing the first word of the identifier
-            if (distractorWord.length === firstWord.length) {
-                if(distractor1 === ""){
-                    if (distractorWord.charAt(0) === firstWord.charAt(0)) {
-                        if (distractorWord.charAt(distractorWord.length - 1) === firstWord.charAt(firstWord.length - 1 ) || distractorWord.charAt(1) === firstWord.charAt( 1 ) ) {
-                            for (let j = 1; j < firstWord.length; j++) {
-                                // go from 2nd to one but last character index the words
-                                if (distractorWord.charAt(j) !== firstWord.charAt(j)) {
-                                    // if this character from word 1 does not equal the character from word 2
-                                    difference++; // increase the difference
-                                }
-                            }
-                            if (difference === 1 || difference === 2) {
-                               distractor1 =  buildDistractor(style,distractorWord,secondWord,thirdWord);
-                            }
-                        }
+            if (distractorWord.length === wordLength && distractorWord.charAt(0) === firstWord.charAt(0)) {
+                for (let j=1; j< wordLength; j++) {
+                    if (distractorWord.charAt(j) !== firstWord.charAt(j)) {
+                        difference++;
                     }
                 }
-            }
-
-            //changing the second word
-            if (distractorWord.length === secondWord.length) {
-                if(distractor2 === "") {
-                    if (distractorWord.charAt(0) !== secondWord.charAt(0) && distractorWord.charAt(1) === secondWord.charAt(1)) {
-                            if (distractorWord.charAt(secondWord.length - 1) === secondWord.charAt(secondWord.length - 1)) {
-                                if(distractorWord.charAt(2) === secondWord.charAt(2)) {
-                                    distractor2 = buildDistractor(style, firstWord, distractorWord, thirdWord);
-                                    if (distractorWord.charAt(secondWord.length - 2) === secondWord.charAt(secondWord.length - 2)) {
-                                        distractor2 = buildDistractor(style, firstWord, distractorWord, thirdWord);
-                                        if (distractorWord.charAt(secondWord.length - 3) === secondWord.charAt(secondWord.length - 3)) {
-                                            distractor2 = buildDistractor(style, firstWord, distractorWord, thirdWord);
-                                        }
-                                    }
-                                }
-                            }
-                        else {
-                            for (let j = 2; j < secondWord.length; j++) {
-                                // go from 2nd to  last character index the words
-                                if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
-                                    // if this character from word 1 does not equal the character from word 2
-                                    difference++; // increase the difference
-                                }
-                            }
-                            if (difference === 0) {
-                                distractor2 = buildDistractor(style, firstWord, distractorWord, thirdWord);
-                            }
-                        }
-                    }
+                if(difference === 1){
+                    distractors[0].push(distractorWord);
                 }
-            }
-
-            //making the 3rd distractor
-            if(distractorWord.length === secondWord.length - 1){
-                if (distractor3 === "") {
-                    if (distractorWord.charAt(0) === secondWord.charAt(0) && distractorWord.charAt(1) === secondWord.charAt(1) ) {
-                        for (let j = 1; j < secondWord.length - 1; j++) {
-                            // go from 2nd to  last character index the words
-                            if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
-                                // if this character from word 1 does not equal the character from word 2
-                                difference++; // increase the difference
-                            }
-                        }
-                        if (difference === 1 || difference === 0 || difference === 2) {
-                            distractor3 = buildDistractor(style,firstWord,distractorWord,thirdWord);
-                        }
-                    }
+                else if(difference === 2){
+                    distractors[1].push(distractorWord);
+                }
+                else if(difference === 3){
+                    distractors[2].push(distractorWord);
+                }
+                else if(difference === 4){
+                    distractors[3].push(distractorWord);
                 }
             }
         }
+        for(let i = 0; i<5; i++){
+            if(distractors[i].length === 0){}
+            else{
+                return distractors[i][0];
+            }
+        }
     }
-   else{
+    else{
         for (let i = 0; i < dictionary.length; i++) {
-            difference = 0;
             distractorWord = dictionary[i];
-            //changing the first word of the identifier
-            if (distractorWord.length === firstWord.length) {
-                if(distractor1 === ""){
-                    if (distractorWord.charAt(0) === firstWord.charAt(0)) {
-                        if (distractorWord.charAt(distractorWord.length - 1) === firstWord.charAt(firstWord.length - 1 ) || distractorWord.charAt(1) === firstWord.charAt( 1 ) ) {
-                            for (let j = 1; j < firstWord.length; j++) {
-                                // go from 2nd to one but last character index the words
-                                if (distractorWord.charAt(j) !== firstWord.charAt(j)) {
-                                    // if this character from word 1 does not equal the character from word 2
-                                    difference++; // increase the difference
-                                }
-                            }
-                            if (difference === 2) {
-                                distractor1 = buildDistractor(style,distractorWord,secondWord,thirdWord);
-                            }
+            difference = 0;
+            if (distractorWord.length === firstWord.length && distractorWord.charAt(0) === firstWord.charAt(0)) {
+                distractors[4].push(distractorWord);
+                if(distractorWord.charAt(wordLength-1) === firstWord.charAt(wordLength-1)) {
+                    for (let j = 1; j < wordLength - 1; j++) {
+                        if (distractorWord.charAt(j) !== firstWord.charAt(j)) {
+                            difference++;
                         }
                     }
-                }
-            }
-
-            //changing the second word
-            if (distractorWord.length === secondWord.length) {
-                if(distractor2 === "") {
-                    if (distractorWord.charAt(0) === secondWord.charAt(0) && distractorWord.charAt(distractorWord.length-1) === secondWord.charAt(distractorWord.length-1)) {
-                        for (let j = 1; j < secondWord.length; j++) {
-                            // go from 2nd to  last character index the words
-                            if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
-                                // if this character from word 1 does not equal the character from word 2
-                                difference++; // increase the difference
-                            }
-                        }
-                        if (difference === 2 || difference === 1 || difference === 3) {
-                            distractor2 = buildDistractor(style,firstWord,distractorWord,thirdWord);
-                        }
-                    }
-                }
-            }
-
-            //making the 3rd distractor
-            if(distractorWord.length === thirdWord.length){
-                if (distractor3 === "") {
-                    if (distractorWord.charAt(distractorWord.length-1) !== thirdWord.charAt(thirdWord.length-1)) {
-                        if (distractorWord.charAt(0) === thirdWord.charAt(0) && distractorWord.charAt(1) === thirdWord.charAt(1) ) {
-                            if (distractorWord.charAt(2) === thirdWord.charAt(2)) {
-                                distractor3 = buildDistractor(style, firstWord, secondWord, distractorWord);
-                                if (distractorWord.charAt(thirdWord.length - 2) === thirdWord.charAt(thirdWord.length - 2)) {
-                                    distractor3 = buildDistractor(style, firstWord, secondWord, distractorWord);
-                                    if (distractorWord.charAt(thirdWord.length - 3) === thirdWord.charAt(thirdWord.length - 3)) {
-                                        distractor3 = buildDistractor(style, firstWord, secondWord, distractorWord);
-                                    }
-                                }
-                            }
-                        }
+                    if (difference === 2) {
+                        distractors[0].push(distractorWord);
+                    } else if (difference === 3) {
+                        distractors[1].push(distractorWord);
+                    } else if (difference === 1) {
+                        distractors[2].push(distractorWord);
+                    } else if (difference === 4) {
+                        distractors[3].push(distractorWord);
                     }
                 }
             }
         }
+        for(let i=0 ; i<5; i++){
+            if(distractors[i].length === 0){}
+            else{
+                return distractors[i][0];
+            }
+        }
     }
-
-    identifierAndDistractors.push(new IdentifierAndAttributes(style,distractor1,identifierAndDistractors.length));
-    identifierAndDistractors.push(new IdentifierAndAttributes(style,distractor2,identifierAndDistractors.length));
-    identifierAndDistractors.push(new IdentifierAndAttributes(style,distractor3,identifierAndDistractors.length));
 }
 
-
-
-function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex > 0) {
-
-        // Pick a remaining element.
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex], array[currentIndex]];
-        array[currentIndex].arrayPosition = randomIndex;
-        array[randomIndex].arrayPosition = currentIndex;
+function generateSecondDistractor(secondWord, thirdWord){
+    let difference = 0;
+    let distractorWord = "";
+    let wordLength =secondWord.length;
+    let distractors = [[],[],[],[],[]];
+    if (thirdWord === ""){
+        for (let i = 0; i < dictionary.length; i++) {
+            distractorWord = dictionary[i];
+            difference = 0;
+            if (distractorWord.length === wordLength && distractorWord.charAt(0) !== secondWord.charAt(0)) {
+                distractors[4].push(distractorWord);
+                for (let j=1; j< wordLength; j++) {
+                    if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
+                        difference++;
+                    }
+                }
+                if(difference === 0){
+                    distractors[0].push(distractorWord);
+                }
+                else if(difference === 1){
+                    distractors[1].push(distractorWord);
+                }
+                else if(difference === 2){
+                    distractors[2].push(distractorWord);
+                }
+                else if(difference === 3){
+                    distractors[3].push(distractorWord);
+                }
+            }
+        }
+        for(let i = 0; i<5; i++){
+            if(distractors[i].length === 0){}
+            else{
+                return distractors[i][0];
+            }
+        }
     }
-
-    return array;
+    else{
+        for (let i = 0; i < dictionary.length; i++) {
+            distractorWord = dictionary[i];
+            difference = 0;
+            if (distractorWord.length === secondWord.length && distractorWord.charAt(0) === secondWord.charAt(0)) {
+                distractors[4].push(distractorWord);
+                if(distractorWord.charAt(wordLength-1) === secondWord.charAt(wordLength-1)) {
+                    for (let j = 1; j < wordLength - 1; j++) {
+                        if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
+                            // here i use difference to measure the similarity between the two words not the difference
+                            difference++;
+                        }
+                    }
+                    if (difference === 2) {
+                        distractors[0].push(distractorWord);
+                    } else if (difference === 1) {
+                        distractors[1].push(distractorWord);
+                    } else if (difference === 3) {
+                        distractors[2].push(distractorWord);
+                    } else if (difference === 4) {
+                        distractors[3].push(distractorWord);
+                    }
+                }
+            }
+        }
+        for(let i =0 ; i<5; i++){
+            if(distractors[i].length === 0){}
+            else{
+                return distractors[i][0];
+            }
+        }
+    }
 }
+
+function generateThirdDistractor(secondWord, word3){
+    let wordLength = 0;
+    let difference = 0;
+    let distractorWord = "";
+    let distractors = [[],[],[],[],[]]
+    if (word3 === ""){
+        secondWord = secondWord.slice(0,secondWord.length-1);
+        wordLength =secondWord.length;
+        console.log("thirdword when numOfWords = 2 is "+secondWord);
+        for (let i = 0; i < dictionary.length; i++) {
+            distractorWord = dictionary[i];
+            difference = 0;
+            if (distractorWord.length === wordLength && distractorWord.charAt(0) === secondWord.charAt(0)) {
+                for (let j=1; j< wordLength; j++) {
+                    if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
+                        difference++;
+                    }
+                }
+                if(difference === 0){
+                    distractors[0].push(distractorWord);
+                }
+                else if(difference === 1){
+                    distractors[1].push(distractorWord);
+                }
+                else if(difference === 2){
+                    distractors[2].push(distractorWord);
+                }
+                else if(difference === 3){
+                    distractors[3].push(distractorWord);
+                }
+            }
+        }
+        for(let i = 0; i<5; i++){
+            if(distractors[i].length === 0){}
+            else{
+                return distractors[i][0];
+            }
+        }
+    }
+    else{
+        for (let i = 0; i < dictionary.length; i++) {
+            wordLength = thirdWord.length;
+            distractorWord = dictionary[i];
+            difference = 0;
+            if (distractorWord.length === wordLength && distractorWord.charAt(0) === thirdWord.charAt(0)) {
+                distractors[4].push(distractorWord);
+                if(distractorWord.charAt(wordLength-1) === thirdWord.charAt(wordLength-1)) {
+                    for (let j = 1; j < wordLength - 1; j++) {
+                        if (distractorWord.charAt(j) !== thirdWord.charAt(j)) {
+                            difference++;
+                        }
+                    }
+                    if (difference === 2) {
+                        distractors[0].push(distractorWord);
+                    } else if (difference === 3) {
+                        distractors[1].push(distractorWord);
+                    } else if (difference === 1) {
+                        distractors[2].push(distractorWord);
+                    } else if (difference === 4) {
+                        distractors[3].push(distractorWord);
+                    }
+                }
+            }
+        }
+        for(let i=0 ; i<5; i++){
+            if(distractors[i].length === 0){}
+            else{
+                return distractors[i][0];
+            }
+        }
+    }
+}
+
 function shuffleArr (array){
     let pos = 0;
     for (let i = array.length - 1; i > 0; i--) {
@@ -424,6 +484,13 @@ function buildDistractor(style, word1, word2, word3){
             else{distractor = word1 + "_" + word2;}
         }
     return distractor;
+}
+function arrayPosition(modulo){
+    let position = rng.int32() %modulo;
+    if (position < 0) {
+        position = -1 * position;
+    }
+    return position;
 }
 
 
