@@ -16,8 +16,8 @@ let nextButton = document.querySelector(".btn button");
 let downloadButton = document.querySelector(".downloadBtn button");
 let content = document.querySelector(".content");
 let experimentTitle = document.querySelector(".experimentTitle h1");
-let start = 0;
-let end = 0;
+let experimentStartTime = 0;
+let experimentEndTime = 0;
 let csvData = [["Style","Number of words","correct answer number","Key pressed","Answer","Time(ms)"]];
 let camelCase = 0;
 let underScore = 0;
@@ -34,6 +34,8 @@ const identifier3 = document.querySelector(".identifier3");
 let firstWord = "";
 let secondWord = "";
 let thirdWord = "";
+let breakMeasureStart = 0;
+let breakMeasureEnd = 0;
 
 
 
@@ -132,7 +134,7 @@ function showGame(){
     experimentTitle.innerText=firstWord+ " "+ secondWord +" " + thirdWord;
     mainPage.hidden = true;
     identifierToStudy.hidden =true;
-    start = Date.now();
+    experimentStartTime = Date.now();
     content.disabled = false;
     content.hidden = false;
     let shuffledArray = shuffleArr(identifierAndDistractors);
@@ -142,22 +144,29 @@ function showGame(){
         let para2 = document.createElement("p");
         para1.innerText = shuffledArray[i].identifierValue;
         para2.innerText = shuffledArray[i].arrayPosition;
-        elementArr[i].appendChild(para1);
         elementArr[i].appendChild(para2);
+        elementArr[i].appendChild(para1);
     }
+    breakMeasureStart = breakMeasureStart+experimentStartTime;
 }
 
 
 nextButton.addEventListener("click", showIdentifier);
-document.addEventListener("keydown",e =>{
-    if(e.key === "Enter"){
+document.addEventListener("keydown",enterKeyEvent)
+function enterKeyEvent(e){
+    if(e.key === "Enter" && experimentTitle.innerText === "Moving Text Experiment" && nextButton.hidden === true){
         showGame();
+    }
+    else if(e.key === "Enter" && experimentTitle.innerText === "BREAK TIME"){
+        experimentTitle.innerText = "Moving Text Experiment";
+        identifierToStudy.innerHTML = "";
+        showIdentifier();
     }
     else{
         e.preventDefault();
         return false;
     }
-});
+}
 document.addEventListener("keydown", keydownEventHandler);
 
 downloadButton.addEventListener("click",()=> {
@@ -173,76 +182,96 @@ downloadButton.addEventListener("click",()=> {
     hiddenElement.click();
 });
 
-
-
 function keydownEventHandler(e) {
     let answer = false;
     let arr = [];
     let rightAnswerPosition =0
+    if(experimentTitle.innerText === "Moving Text Experiment" ){
+        e.preventDefault();
+        return false;
+    }
     if (e.key === "0") {
-        end =Date.now();
+        experimentEndTime =Date.now();
         answer = (identifierAndDistractors[0].identifierValue === identifier);
     }
     else if (e.key === "1") {
-        end =Date.now();
+        experimentEndTime =Date.now();
         answer = (identifierAndDistractors[1].identifierValue === identifier);
     }
     else if (e.key === "2") {
-        end =Date.now();
+        experimentEndTime =Date.now();
         answer = (identifierAndDistractors[2].identifierValue === identifier);
     }
     else if (e.key === "3") {
-        end =Date.now();
+        experimentEndTime =Date.now();
         answer = (identifierAndDistractors[3].identifierValue === identifier);
     }
     else {e.preventDefault();
-        return false;}
-    if (e.key === "Enter") {
-        showGame();
-    }
-    else{
-        for (let i = 0; i <identifierAndDistractors.length ; i++) {
-            if(identifierAndDistractors[i].identifierValue === identifier){
-                rightAnswerPosition = identifierAndDistractors[i].arrayPosition;
-            }
+        return  false;
+        }
+    for (let i = 0; i <identifierAndDistractors.length ; i++) {
+        if(identifierAndDistractors[i].identifierValue === identifier){
+            rightAnswerPosition = identifierAndDistractors[i].arrayPosition;
         }
     }
+    breakMeasureEnd = breakMeasureEnd+experimentEndTime;
 
-    arr.push(style,numberOfWords,rightAnswerPosition,e.key, answer, (end-start));
+    arr.push(style,numberOfWords,rightAnswerPosition,e.key, answer, (experimentEndTime-experimentStartTime));
         csvData.push(arr);
-        if(camelCase+underScore === 10){
-            experimentTitle.innerText = "Moving Text Experiment";
-            document.removeEventListener("keydown", keydownEventHandler);
+        if(breakMeasureEnd-breakMeasureStart >= 600000){
+            experimentTitle.innerText = "BREAK TIME";
             mainPage.hidden = false;
-            mainPage.innerHTML =("You have successfully completed the Experiment. " +
-                "Thank you for your participation. " +
-                "Click on the button below to download your experiment results")
-            downloadButton.disabled = false;
-            downloadButton.hidden = false;
-            identifier0.hidden = true;
-            identifier1.hidden = true;
-            identifier2.hidden = true;
-            identifier3.hidden = true;
-            content.disabled = true;
-            content.hidden =true;
-        }
-        else{
-            experimentTitle.innerText = "Moving Text Experiment";
-            mainPage.hidden = false;
+            mainPage.innerHTML = ""
             identifierToStudy.hidden =false;
             identifier0.textContent = "";
             identifier1.textContent = "";
             identifier2.textContent = "";
             identifier3.textContent = "";
-            identifierToStudy.innerHTML = "";
-            showIdentifier();
+            identifierToStudy.innerHTML = "BREAK! BREAK! BREAK!";
+            let para1 = document.createElement("p");
+            let para2 = document.createElement("p");
+            let para3 = document.createElement("p");
+            let para4 = document.createElement("p");
+            para1.innerText = "Congratulations, you have completed 15 minutes of the Experiment.";
+            para2.innerText = "You can take a 5-10 minutes break now.";
+            para3.innerText = "Relax, drink a glass of water or a cup of coffee, or any drink.";
+            para4.innerText = "Then you press enter to proceed.";
+            mainPage.appendChild(para1);
+            mainPage.appendChild(para2);
+            mainPage.appendChild(para3);
+            mainPage.appendChild(para4);
+            breakMeasureStart = Date.now();
+            breakMeasureEnd = 0;
         }
-}
-
-
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+        else {
+            if (camelCase + underScore === 100) {
+                experimentTitle.innerText = "Moving Text Experiment";
+                document.removeEventListener("keydown", keydownEventHandler);
+                document.removeEventListener("keydown", enterKeyEvent);
+                mainPage.hidden = false;
+                mainPage.innerHTML = ("You have successfully completed the Experiment. " +
+                    "Thank you for your participation. " +
+                    "Click on the button below to download your experiment results")
+                downloadButton.disabled = false;
+                downloadButton.hidden = false;
+                identifier0.hidden = true;
+                identifier1.hidden = true;
+                identifier2.hidden = true;
+                identifier3.hidden = true;
+                content.disabled = true;
+                content.hidden = true;
+            } else {
+                experimentTitle.innerText = "Moving Text Experiment";
+                mainPage.hidden = false;
+                identifierToStudy.hidden = false;
+                identifier0.textContent = "";
+                identifier1.textContent = "";
+                identifier2.textContent = "";
+                identifier3.textContent = "";
+                identifierToStudy.innerHTML = "";
+                showIdentifier();
+            }
+        }
 }
 
 function generateFirstDistractor(firstWord, thirdWord){
@@ -394,7 +423,6 @@ function generateThirdDistractor(secondWord, word3){
     if (word3 === ""){
         secondWord = secondWord.slice(0,secondWord.length-1);
         wordLength =secondWord.length;
-        console.log("thirdword when numOfWords = 2 is "+secondWord);
         for (let i = 0; i < dictionary.length; i++) {
             distractorWord = dictionary[i];
             difference = 0;
@@ -492,6 +520,9 @@ function arrayPosition(modulo){
     }
     return position;
 }
+ function exercise(){
+    showIdentifier();
 
+ }
 
 
