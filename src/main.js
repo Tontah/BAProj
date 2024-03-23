@@ -264,7 +264,7 @@ function keydownEventHandler(e) {
         csvData.push(arr);
 
         let timeElapsed = breakMeasureEnd - breakMeasureStart;
-        if (breakMeasureEnd - breakMeasureStart >= 10000) {
+        if (breakMeasureEnd - breakMeasureStart >= 780000) {
             experimentTitle.innerText = "BREAK TIME";
             mainPage.hidden = false;
             mainPage.innerHTML = ""
