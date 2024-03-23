@@ -17,6 +17,7 @@ let downloadButton = document.querySelector(".downloadBtn button");
 let content = document.querySelector(".content");
 let experimentTitle = document.querySelector(".experimentTitle h1");
 let mode = document.querySelector(".experimentTitle h2");
+let titlesClass = document.querySelector(".experimentTitle");
 let experimentStartTime = 0;
 let experimentEndTime = 0;
 let csvData = [["Style","Number of words","correct answer number","Key pressed","Answer","Time(ms)"]];
@@ -38,10 +39,12 @@ let thirdWord = "";
 let breakMeasureStart = 0;
 let breakMeasureEnd = 0;
 let experimentRounds = 1000;
+let roundsCompleted = 0;
 let para1 = document.createElement("p");
 let para2 = document.createElement("p");
 let para3 = document.createElement("p");
 let para4 = document.createElement("p");
+let roundsHeading = document.createElement("h1");
 
 
 
@@ -163,6 +166,10 @@ function enterKeyEvent(e){
     else if((e.key === "Enter" && experimentTitle.innerText === "BREAK TIME") || (e.key === "Enter" && experimentTitle.innerText === "TRAINING MODE COMPLETED")){
         experimentTitle.innerText = "Moving Text Experiment";
         identifierToStudy.innerHTML = "";
+        roundsHeading.innerText = roundsCompleted + "/" + experimentRounds;
+        roundsHeading.style.textAlign = "right";
+        titlesClass.appendChild(roundsHeading);
+        roundsCompleted++;
         showIdentifier();
     }
     else{
@@ -190,6 +197,8 @@ function keydownEventHandler(e) {
     let answer = false;
     let arr = [];
     let rightAnswerPosition =0
+
+
     if(expTitle=== "Moving Text Experiment" || expTitle.includes("TRAINING MODE")){
         e.preventDefault();
         return false;
@@ -254,8 +263,8 @@ function keydownEventHandler(e) {
         arr.push(style, numberOfWords, rightAnswerPosition, e.key, answer, (experimentEndTime - experimentStartTime));
         csvData.push(arr);
 
-
-        if (breakMeasureEnd - breakMeasureStart >= 600000) {
+        let timeElapsed = breakMeasureEnd - breakMeasureStart;
+        if (breakMeasureEnd - breakMeasureStart >= 10000) {
             experimentTitle.innerText = "BREAK TIME";
             mainPage.hidden = false;
             mainPage.innerHTML = ""
@@ -273,7 +282,7 @@ function keydownEventHandler(e) {
             mainPage.appendChild(para2);
             mainPage.appendChild(para3);
             mainPage.appendChild(para4);
-            breakMeasureStart = Date.now();
+            breakMeasureStart = 0;
             breakMeasureEnd = 0;
         }
         else {
@@ -300,6 +309,9 @@ function keydownEventHandler(e) {
                 identifier2.textContent = "";
                 identifier3.textContent = "";
                 identifierToStudy.innerHTML = "";
+                roundsHeading.innerText = roundsCompleted + "/" + experimentRounds;
+                titlesClass.appendChild(roundsHeading);
+                roundsCompleted++;
                 showIdentifier();
             }
         }
