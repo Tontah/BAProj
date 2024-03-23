@@ -16,6 +16,7 @@ let nextButton = document.querySelector(".btn button");
 let downloadButton = document.querySelector(".downloadBtn button");
 let content = document.querySelector(".content");
 let experimentTitle = document.querySelector(".experimentTitle h1");
+let mode = document.querySelector(".experimentTitle h2");
 let experimentStartTime = 0;
 let experimentEndTime = 0;
 let csvData = [["Style","Number of words","correct answer number","Key pressed","Answer","Time(ms)"]];
@@ -36,6 +37,11 @@ let secondWord = "";
 let thirdWord = "";
 let breakMeasureStart = 0;
 let breakMeasureEnd = 0;
+let experimentRounds = 1000;
+let para1 = document.createElement("p");
+let para2 = document.createElement("p");
+let para3 = document.createElement("p");
+let para4 = document.createElement("p");
 
 
 
@@ -43,6 +49,7 @@ downloadButton.disabled = true;
 downloadButton.hidden = true;
 content.disabled = true;
 content.hidden = true;
+mode.hidden = true
 
 
 //function to show the identifier to be studied
@@ -55,14 +62,10 @@ function showIdentifier(){
     nextButton.hidden = true;
     content.disabled = true;
     content.hidden = true;
-    let para1 = document.createElement("p");
-    let para2 = document.createElement("p");
-    let para3 = document.createElement("p");
-    let para4 = document.createElement("p");
     para1.innerText = "Below, you will see an sentence, please study/memorize this.";
     para2.innerText = "place your hand on the num keys and keep your hand there till the experiment ends.";
-    para3.innerText = "Press the number showing below the text with the identifier that matches the sentence you just saw.";
-    para4.innerText = "Then you press enter to proceed.";
+    para3.innerText = "Press the number showing above the text with the identifier(containing thesame words) that matches the sentence you just saw.";
+    para4.innerText = "Then you press enter to proceed. The sentence will still be showing at the top of the page for reference.";
     mainPage.appendChild(para1);
     mainPage.appendChild(para2);
     mainPage.appendChild(para3);
@@ -72,7 +75,7 @@ function showIdentifier(){
     for (let i = 0; i < numberOfWords; i++) {
         let word = words[arrayPosition(words.length)];
         if(word.length>3) {
-            if (style === "Camelcase" && camelCase < 150) {
+            if (style === "Camelcase" && camelCase < (experimentRounds/2)) {
                 if (i !== 0) {
                     identifier = identifier + word.charAt(0).toUpperCase() + word.slice(1);
                     if (i === 1) {
@@ -100,7 +103,7 @@ function showIdentifier(){
                     identifier = word;
                     firstWord = word;
                 }
-            }console.log("identifier is "+ identifier);
+            }
         }
         else{
             i--;
@@ -151,13 +154,13 @@ function showGame(){
 }
 
 
-nextButton.addEventListener("click", showIdentifier);
+nextButton.addEventListener("click", training);
 document.addEventListener("keydown",enterKeyEvent)
 function enterKeyEvent(e){
-    if(e.key === "Enter" && experimentTitle.innerText === "Moving Text Experiment" && nextButton.hidden === true){
+    if((e.key === "Enter" && nextButton.hidden === true && experimentTitle.innerText === "TRAINING MODE")||(e.key === "Enter" && nextButton.hidden === true && experimentTitle.innerText === "Moving Text Experiment")){
         showGame();
     }
-    else if(e.key === "Enter" && experimentTitle.innerText === "BREAK TIME"){
+    else if((e.key === "Enter" && experimentTitle.innerText === "BREAK TIME") || (e.key === "Enter" && experimentTitle.innerText === "TRAINING MODE COMPLETED")){
         experimentTitle.innerText = "Moving Text Experiment";
         identifierToStudy.innerHTML = "";
         showIdentifier();
@@ -183,10 +186,11 @@ downloadButton.addEventListener("click",()=> {
 });
 
 function keydownEventHandler(e) {
+    let expTitle = experimentTitle.innerText;
     let answer = false;
     let arr = [];
     let rightAnswerPosition =0
-    if(experimentTitle.innerText === "Moving Text Experiment" ){
+    if(expTitle=== "Moving Text Experiment" || expTitle.includes("TRAINING MODE")){
         e.preventDefault();
         return false;
     }
@@ -209,29 +213,58 @@ function keydownEventHandler(e) {
     else {e.preventDefault();
         return  false;
         }
-    for (let i = 0; i <identifierAndDistractors.length ; i++) {
-        if(identifierAndDistractors[i].identifierValue === identifier){
-            rightAnswerPosition = identifierAndDistractors[i].arrayPosition;
-        }
-    }
-    breakMeasureEnd = breakMeasureEnd+experimentEndTime;
 
-    arr.push(style,numberOfWords,rightAnswerPosition,e.key, answer, (experimentEndTime-experimentStartTime));
+    if(mode.innerText === "training"){
+            mainPage.hidden = false;
+            identifier0.textContent = "";
+            identifier1.textContent = "";
+            identifier2.textContent = "";
+            identifier3.textContent = "";
+            identifierToStudy.hidden = false;
+            identifierToStudy.innerHTML = "";
+            if (camelCase + underScore === 30) {
+                experimentTitle.innerText = "TRAINING MODE COMPLETED";
+                para1.innerText = "Congratulations, you just completed the TRAINING.";
+                para2.innerText = "You can take a 5-10 minutes break now.";
+                para3.innerText = "Relax, drink a glass of water or a cup of coffee, or any drink.";
+                para4.innerText = "Then you press enter to proceed with the Experiment.";
+                mainPage.appendChild(para1);
+                mainPage.appendChild(para2);
+                mainPage.appendChild(para3);
+                mainPage.appendChild(para4);
+                camelCase = 0;
+                underScore = 0;
+                mode.innerText = "Experimenting";
+                breakMeasureEnd = 0;
+                breakMeasureStart = 0;
+            } else {
+                experimentTitle.innerText = "TRAINING MODE";
+                showIdentifier();
+            }
+    }
+    else {
+        for (let i = 0; i < identifierAndDistractors.length; i++) {
+            if (identifierAndDistractors[i].identifierValue === identifier) {
+                rightAnswerPosition = identifierAndDistractors[i].arrayPosition;
+                break;
+            }
+        }
+        breakMeasureEnd = breakMeasureEnd + experimentEndTime;
+
+        arr.push(style, numberOfWords, rightAnswerPosition, e.key, answer, (experimentEndTime - experimentStartTime));
         csvData.push(arr);
-        if(breakMeasureEnd-breakMeasureStart >= 600000){
+
+
+        if (breakMeasureEnd - breakMeasureStart >= 600000) {
             experimentTitle.innerText = "BREAK TIME";
             mainPage.hidden = false;
             mainPage.innerHTML = ""
-            identifierToStudy.hidden =false;
+            identifierToStudy.hidden = false;
             identifier0.textContent = "";
             identifier1.textContent = "";
             identifier2.textContent = "";
             identifier3.textContent = "";
             identifierToStudy.innerHTML = "BREAK! BREAK! BREAK!";
-            let para1 = document.createElement("p");
-            let para2 = document.createElement("p");
-            let para3 = document.createElement("p");
-            let para4 = document.createElement("p");
             para1.innerText = "Congratulations, you have completed 15 minutes of the Experiment.";
             para2.innerText = "You can take a 5-10 minutes break now.";
             para3.innerText = "Relax, drink a glass of water or a cup of coffee, or any drink.";
@@ -244,11 +277,11 @@ function keydownEventHandler(e) {
             breakMeasureEnd = 0;
         }
         else {
-            if (camelCase + underScore === 100) {
-                experimentTitle.innerText = "Moving Text Experiment";
+            experimentTitle.innerText = "Moving Text Experiment";
+            mainPage.hidden = false;
+            if (camelCase + underScore === experimentRounds) {
                 document.removeEventListener("keydown", keydownEventHandler);
                 document.removeEventListener("keydown", enterKeyEvent);
-                mainPage.hidden = false;
                 mainPage.innerHTML = ("You have successfully completed the Experiment. " +
                     "Thank you for your participation. " +
                     "Click on the button below to download your experiment results")
@@ -261,8 +294,6 @@ function keydownEventHandler(e) {
                 content.disabled = true;
                 content.hidden = true;
             } else {
-                experimentTitle.innerText = "Moving Text Experiment";
-                mainPage.hidden = false;
                 identifierToStudy.hidden = false;
                 identifier0.textContent = "";
                 identifier1.textContent = "";
@@ -272,6 +303,13 @@ function keydownEventHandler(e) {
                 showIdentifier();
             }
         }
+    }
+}
+
+function training(){
+    mode.innerText = "training";
+    experimentTitle.innerText = "TRAINING MODE";
+    showIdentifier();
 }
 
 function generateFirstDistractor(firstWord, thirdWord){
