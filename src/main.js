@@ -152,6 +152,9 @@ function showGame(){
         para2.innerText = shuffledArray[i].arrayPosition;
         elementArr[i].appendChild(para2);
         elementArr[i].appendChild(para1);
+        para2.style.marginBottom = "0px";
+        para1.style.marginTop = "0px";
+        para2.style.marginTop = "80px";
     }
     breakMeasureStart = breakMeasureStart+experimentStartTime;
 }
