@@ -37,7 +37,6 @@ let firstWord = "";
 let secondWord = "";
 let thirdWord = "";
 let breakMeasureStart = 0;
-let breakMeasureEnd = 0;
 let experimentRounds = 1000;
 let roundsCompleted = 0;
 let para1 = document.createElement("p");
@@ -85,7 +84,6 @@ function showIdentifier(){
                         secondWord = word;
                     } else if (i === 2) {
                         thirdWord = word;
-                        console.log("identifier = " + identifier);
                     }
                 } else {
                     identifier = word;
@@ -156,7 +154,6 @@ function showGame(){
         para1.style.marginTop = "0px";
         para2.style.marginTop = "80px";
     }
-    breakMeasureStart = breakMeasureStart+experimentStartTime;
 }
 
 
@@ -173,6 +170,7 @@ function enterKeyEvent(e){
         roundsHeading.style.textAlign = "right";
         titlesClass.appendChild(roundsHeading);
         roundsCompleted++;
+        breakMeasureStart = Date.now();
         showIdentifier();
     }
     else{
@@ -247,7 +245,6 @@ function keydownEventHandler(e) {
                 camelCase = 0;
                 underScore = 0;
                 mode.innerText = "Experimenting";
-                breakMeasureEnd = 0;
                 breakMeasureStart = 0;
             } else {
                 experimentTitle.innerText = "TRAINING MODE";
@@ -261,13 +258,11 @@ function keydownEventHandler(e) {
                 break;
             }
         }
-        breakMeasureEnd = breakMeasureEnd + experimentEndTime;
 
         arr.push(style, numberOfWords, rightAnswerPosition, e.key, answer, (experimentEndTime - experimentStartTime));
         csvData.push(arr);
 
-        let timeElapsed = breakMeasureEnd - breakMeasureStart;
-        if (breakMeasureEnd - breakMeasureStart >= 780000) {
+        if (experimentEndTime - breakMeasureStart >= 900000) {
             experimentTitle.innerText = "BREAK TIME";
             mainPage.hidden = false;
             mainPage.innerHTML = ""
@@ -286,7 +281,6 @@ function keydownEventHandler(e) {
             mainPage.appendChild(para3);
             mainPage.appendChild(para4);
             breakMeasureStart = 0;
-            breakMeasureEnd = 0;
         }
         else {
             experimentTitle.innerText = "Moving Text Experiment";
