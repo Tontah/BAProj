@@ -262,7 +262,7 @@ function keydownEventHandler(e) {
         arr.push(style, numberOfWords, rightAnswerPosition, e.key, answer, (experimentEndTime - experimentStartTime));
         csvData.push(arr);
 
-        if (experimentEndTime - breakMeasureStart >= 900000) {
+        if (experimentEndTime - breakMeasureStart >= 600000) {
             experimentTitle.innerText = "BREAK TIME";
             mainPage.hidden = false;
             mainPage.innerHTML = ""
