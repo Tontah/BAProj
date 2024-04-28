@@ -1,6 +1,5 @@
 import {words} from "./word.js";
 import {dictionary} from "./dictionary.js";
-//const dictionary = ["mass","met", "meter", "method", "foll", "for"];
 
 //constructor for identifierAndAttributes
 function IdentifierAndAttributes(style, identifierValue, arrayPosition) {
@@ -26,7 +25,7 @@ let underScore = 0;
 const identifierStyle = ["Camelcase", "Underscore"];
 const noOfWords = [2, 3];
 let csv = "";
-let rng = new Math.seedrandom("hello");
+let rng = new Math.seedrandom("right");
 let style = "";
 let numberOfWords =0;
 const identifier0 = document.querySelector(".identifier0");
@@ -37,12 +36,8 @@ let firstWord = "";
 let secondWord = "";
 let thirdWord = "";
 let breakMeasureStart = 0;
-let experimentRounds = 1000;
+let experimentRounds = 100;
 let roundsCompleted = 0;
-let para1 = document.createElement("p");
-let para2 = document.createElement("p");
-let para3 = document.createElement("p");
-let para4 = document.createElement("p");
 let roundsHeading = document.createElement("h1");
 
 
@@ -59,23 +54,20 @@ function showIdentifier(){
     thirdWord = "";
     identifier = "";
     identifierAndDistractors.length = 0;
-    mainPage.innerHTML = "";
     nextButton.disabled = true;
     nextButton.hidden = true;
     content.disabled = true;
     content.hidden = true;
-    para1.innerText = "Below, you will see an sentence, please study/memorize this.";
-    para2.innerText = "place your hand on the num keys and keep your hand there till the experiment ends.";
-    para3.innerText = "Press the number showing above the text with the identifier(containing thesame words) that matches the sentence you just saw.";
-    para4.innerText = "Then you press enter to proceed. The sentence will still be showing at the top of the page for reference.";
-    mainPage.appendChild(para1);
-    mainPage.appendChild(para2);
-    mainPage.appendChild(para3);
-    mainPage.appendChild(para4);
-    style = identifierStyle[arrayPosition(identifierStyle.length)];
-   numberOfWords = noOfWords[arrayPosition(noOfWords.length)];
+    mainPage.innerText +=
+        "Below, you will see a sentence, please study/memorize this.\n\n"+
+        "place your fingers on the num keys as explained previously and keep your them there till the experiment ends.\n\n"+
+        "On the next page,\n\n"+
+        "press the number showing above the text with the identifier(containing the same phrases) that matches the sentence you just saw.\n\n"+
+        "Then you press enter to proceed. The sentence will still be showing at the top of the page for reference.\n\n";
+    style = identifierStyle[positionInArray(identifierStyle.length)];
+   numberOfWords = noOfWords[positionInArray(noOfWords.length)];
     for (let i = 0; i < numberOfWords; i++) {
-        let word = words[arrayPosition(words.length)];
+        let word = words[positionInArray(words.length)];
         if(word.length>3) {
             if (style === "Camelcase" && camelCase < (experimentRounds/2)) {
                 if (i !== 0) {
@@ -114,16 +106,16 @@ function showIdentifier(){
         underScore++;
     }
     else {camelCase++;}
-    identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistractor(style,
-        generateFirstDistractor(firstWord, thirdWord),secondWord,thirdWord)),identifierAndDistractors.length));
-    identifierAndDistractors.push(new IdentifierAndAttributes(style,(buildDistractor(style,firstWord,
-        generateSecondDistractor(secondWord, thirdWord),thirdWord)),identifierAndDistractors.length));
+    identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistracter(style,
+        generateFirstDistracter(firstWord, thirdWord),secondWord,thirdWord)),identifierAndDistractors.length));
+    identifierAndDistractors.push(new IdentifierAndAttributes(style,(buildDistracter(style,firstWord,
+        generateSecondDistracter(secondWord, thirdWord),thirdWord)),identifierAndDistractors.length));
     if(numberOfWords === 2){
-        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistractor(style,firstWord,
-            generateThirdDistractor(secondWord, thirdWord), thirdWord)),identifierAndDistractors.length));
+        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistracter(style,firstWord,
+            generateThirdDistracter(secondWord, thirdWord), thirdWord)),identifierAndDistractors.length));
     }else {
-        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistractor(style,
-            firstWord, secondWord, generateThirdDistractor(secondWord, thirdWord))), identifierAndDistractors.length));
+        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistracter(style,
+            firstWord, secondWord, generateThirdDistracter(secondWord, thirdWord))), identifierAndDistractors.length));
     }
     identifierAndDistractors.push(new IdentifierAndAttributes(style,identifier,identifierAndDistractors.length));
 
@@ -160,11 +152,12 @@ function showGame(){
 nextButton.addEventListener("click", training);
 document.addEventListener("keydown",enterKeyEvent)
 function enterKeyEvent(e){
-    if((e.key === "Enter" && nextButton.hidden === true && experimentTitle.innerText === "TRAINING MODE")||(e.key === "Enter" && nextButton.hidden === true && experimentTitle.innerText === "Moving Text Experiment")){
+    if((e.key === "Enter" && nextButton.hidden === true && experimentTitle.innerText === "TRAINING MODE")||
+        (e.key === "Enter" && nextButton.hidden === true && experimentTitle.innerText === "REVISED CLOUD EXPERIMENT")){
         showGame();
     }
     else if((e.key === "Enter" && experimentTitle.innerText === "BREAK TIME") || (e.key === "Enter" && experimentTitle.innerText === "TRAINING MODE COMPLETED")){
-        experimentTitle.innerText = "Moving Text Experiment";
+        experimentTitle.innerText = "REVISED CLOUD EXPERIMENT";
         identifierToStudy.innerHTML = "";
         roundsHeading.innerText = roundsCompleted + "/" + experimentRounds;
         roundsHeading.style.textAlign = "right";
@@ -198,9 +191,10 @@ function keydownEventHandler(e) {
     let answer = false;
     let arr = [];
     let rightAnswerPosition =0
+    mainPage.innerHTML = "";
 
 
-    if(expTitle=== "Moving Text Experiment" || expTitle.includes("TRAINING MODE")){
+    if(expTitle=== "REVISED CLOUD EXPERIMENT" || expTitle.includes("TRAINING MODE")){
         e.preventDefault();
         return false;
     }
@@ -234,14 +228,10 @@ function keydownEventHandler(e) {
             identifierToStudy.innerHTML = "";
             if (camelCase + underScore === 30) {
                 experimentTitle.innerText = "TRAINING MODE COMPLETED";
-                para1.innerText = "Congratulations, you just completed the TRAINING.";
-                para2.innerText = "You can take a 5-10 minutes break now.";
-                para3.innerText = "Relax, drink a glass of water or a cup of coffee, or any drink.";
-                para4.innerText = "Then you press enter to proceed with the Experiment.";
-                mainPage.appendChild(para1);
-                mainPage.appendChild(para2);
-                mainPage.appendChild(para3);
-                mainPage.appendChild(para4);
+                mainPage.innerText = "Congratulations, you just completed the TRAINING.\n\n"+
+                    "You can take a 10-15 minutes break now.\n\n"+
+                    "Relax, drink a glass of water or a cup of coffee, or any drink.\n\n"+
+                    "Then you press enter to proceed with the Experiment.\n\n";
                 camelCase = 0;
                 underScore = 0;
                 mode.innerText = "Experimenting";
@@ -272,25 +262,22 @@ function keydownEventHandler(e) {
             identifier2.textContent = "";
             identifier3.textContent = "";
             identifierToStudy.innerHTML = "BREAK! BREAK! BREAK!";
-            para1.innerText = "Congratulations, you have completed 15 minutes of the Experiment.";
-            para2.innerText = "You can take a 5-10 minutes break now.";
-            para3.innerText = "Relax, drink a glass of water or a cup of coffee, or any drink.";
-            para4.innerText = "Then you press enter to proceed.";
-            mainPage.appendChild(para1);
-            mainPage.appendChild(para2);
-            mainPage.appendChild(para3);
-            mainPage.appendChild(para4);
+            mainPage.innerText = "Congratulations, you have completed 15 minutes of the Experiment.\n\n"+
+                "You can take a 10-15 minutes break now.\n\n"+
+                "Relax, drink a glass of water or a cup of coffee, or any drink.\n\n"+
+                "Then you press enter to proceed with the Experiment.\n\n";
             breakMeasureStart = 0;
         }
         else {
-            experimentTitle.innerText = "Moving Text Experiment";
+            experimentTitle.innerText = "REVISED CLOUD EXPERIMENT";
             mainPage.hidden = false;
             if (camelCase + underScore === experimentRounds) {
                 document.removeEventListener("keydown", keydownEventHandler);
                 document.removeEventListener("keydown", enterKeyEvent);
-                mainPage.innerHTML = ("You have successfully completed the Experiment. " +
-                    "Thank you for your participation. " +
-                    "Click on the button below to download your experiment results")
+                mainPage.innerHTML = ("You have successfully completed the Experiment.\n\n" +
+                    "Thank you for your participation.\n\n" +
+                    "Click on the button below to download your experiment results\n\n")
+                roundsHeading.innerText = roundsCompleted + "/" + experimentRounds;
                 downloadButton.disabled = false;
                 downloadButton.hidden = false;
                 identifier0.hidden = true;
@@ -318,234 +305,213 @@ function keydownEventHandler(e) {
 function training(){
     mode.innerText = "training";
     experimentTitle.innerText = "TRAINING MODE";
+    mainPage.innerText = "Place your fingers on the number keys as follows;\n\n"+
+    "The thumb on the zero-key,\n\n"+
+    "The index finger on the one-key,\n\n"+
+    "The middle finger on the two-key,\n\n"+
+    "The ring finger on the three-key, and\n\n"+
+    "The little finger on the enter-key.\n\n";
     showIdentifier();
 }
 
-function generateFirstDistractor(firstWord, thirdWord){
+function generateFirstDistracter(firstWord, thirdWord){
     let difference = 0;
-    let distractorWord = "";
+    let distracterWord = "";
     let wordLength =firstWord.length;
-    let distractors = [[],[],[],[],[]]
+    let distracters = [[],[],[],[],[]]
     if (thirdWord === ""){
         for (let i = 0; i < dictionary.length; i++) {
-            distractorWord = dictionary[i];
+            distracterWord = dictionary[i];
             difference = 0;
             //changing the first word of the identifier
-            if (distractorWord.length === wordLength && distractorWord.charAt(0) === firstWord.charAt(0)) {
+            if (distracterWord.length === wordLength && distracterWord.charAt(0) === firstWord.charAt(0)) {
                 for (let j=1; j< wordLength; j++) {
-                    if (distractorWord.charAt(j) !== firstWord.charAt(j)) {
+                    if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
                         difference++;
                     }
                 }
-                if(difference === 1){
-                    distractors[0].push(distractorWord);
-                }
-                else if(difference === 2){
-                    distractors[1].push(distractorWord);
-                }
-                else if(difference === 3){
-                    distractors[2].push(distractorWord);
-                }
-                else if(difference === 4){
-                    distractors[3].push(distractorWord);
-                }
+                fillingDistractersArrays(1,2,3,4,difference,distracters,distracterWord);
             }
         }
         for(let i = 0; i<5; i++){
-            if(distractors[i].length === 0){}
+            if(distracters[i].length === 0){}
             else{
-                return distractors[i][0];
+                return distracters[i][0];
             }
         }
     }
     else{
         for (let i = 0; i < dictionary.length; i++) {
-            distractorWord = dictionary[i];
+            distracterWord = dictionary[i];
             difference = 0;
-            if (distractorWord.length === firstWord.length && distractorWord.charAt(0) === firstWord.charAt(0)) {
-                distractors[4].push(distractorWord);
-                if(distractorWord.charAt(wordLength-1) === firstWord.charAt(wordLength-1)) {
+            if (distracterWord.length === firstWord.length && distracterWord.charAt(0) === firstWord.charAt(0)) {
+                distracters[4].push(distracterWord);
+                if(distracterWord.charAt(wordLength-1) === firstWord.charAt(wordLength-1)) {
                     for (let j = 1; j < wordLength - 1; j++) {
-                        if (distractorWord.charAt(j) !== firstWord.charAt(j)) {
+                        if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
                             difference++;
                         }
                     }
-                    if (difference === 2) {
-                        distractors[0].push(distractorWord);
-                    } else if (difference === 3) {
-                        distractors[1].push(distractorWord);
-                    } else if (difference === 1) {
-                        distractors[2].push(distractorWord);
-                    } else if (difference === 4) {
-                        distractors[3].push(distractorWord);
-                    }
+                    fillingDistractersArrays(2,3,1,4,difference,distracters,distracterWord);
                 }
             }
         }
+            for (let i = 0; i < distracters[4].length; i++) {
+                distracterWord = distracters[4][i];
+                difference = 0;
+                if (distracterWord.charAt(1) === firstWord.charAt(1)) {
+                    for (let j = 2; j < wordLength; j++) {
+                        if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
+                            difference++;
+                        }
+                    }
+                    fillingDistractersArrays(2,3,1,4,difference,distracters,distracterWord);
+                }
+            }
         for(let i=0 ; i<5; i++){
-            if(distractors[i].length === 0){}
+            if(distracters[i].length === 0){}
             else{
-                return distractors[i][0];
+                return distracters[i][0];
             }
         }
     }
 }
 
-function generateSecondDistractor(secondWord, thirdWord){
+function generateSecondDistracter(secondWord, thirdWord){
     let difference = 0;
-    let distractorWord = "";
+    let distracterWord = "";
     let wordLength =secondWord.length;
-    let distractors = [[],[],[],[],[]];
+    let distracters = [[],[],[],[],[]];
     if (thirdWord === ""){
         for (let i = 0; i < dictionary.length; i++) {
-            distractorWord = dictionary[i];
+            distracterWord = dictionary[i];
             difference = 0;
-            if (distractorWord.length === wordLength && distractorWord.charAt(0) !== secondWord.charAt(0)) {
-                distractors[4].push(distractorWord);
+            if (distracterWord.length === wordLength && distracterWord.charAt(0) !== secondWord.charAt(0)) {
+                distracters[4].push(distracterWord);
                 for (let j=1; j< wordLength; j++) {
-                    if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
+                    if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
                         difference++;
                     }
                 }
-                if(difference === 0){
-                    distractors[0].push(distractorWord);
-                }
-                else if(difference === 1){
-                    distractors[1].push(distractorWord);
-                }
-                else if(difference === 2){
-                    distractors[2].push(distractorWord);
-                }
-                else if(difference === 3){
-                    distractors[3].push(distractorWord);
-                }
+                fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
             }
         }
         for(let i = 0; i<5; i++){
-            if(distractors[i].length === 0){}
+            if(distracters[i].length === 0){}
             else{
-                return distractors[i][0];
+                return distracters[i][0];
             }
         }
     }
     else{
         for (let i = 0; i < dictionary.length; i++) {
-            distractorWord = dictionary[i];
+            distracterWord = dictionary[i];
             difference = 0;
-            if (distractorWord.length === secondWord.length && distractorWord.charAt(0) === secondWord.charAt(0)) {
-                distractors[4].push(distractorWord);
-                if(distractorWord.charAt(wordLength-1) === secondWord.charAt(wordLength-1)) {
+            if (distracterWord.length === secondWord.length && distracterWord.charAt(0) === secondWord.charAt(0)) {
+                distracters[4].push(distracterWord);
+                if(distracterWord.charAt(wordLength-1) === secondWord.charAt(wordLength-1)) {
                     for (let j = 1; j < wordLength - 1; j++) {
-                        if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
+                        if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
                             // here i use difference to measure the similarity between the two words not the difference
                             difference++;
                         }
                     }
-                    if (difference === 2) {
-                        distractors[0].push(distractorWord);
-                    } else if (difference === 1) {
-                        distractors[1].push(distractorWord);
-                    } else if (difference === 3) {
-                        distractors[2].push(distractorWord);
-                    } else if (difference === 4) {
-                        distractors[3].push(distractorWord);
-                    }
+                    fillingDistractersArrays(2,1,3,4,difference,distracters,distracterWord);
                 }
             }
         }
         for(let i =0 ; i<5; i++){
-            if(distractors[i].length === 0){}
+            if(distracters[i].length === 0){}
             else{
-                return distractors[i][0];
+                return distracters[i][0];
             }
         }
     }
 }
 
-function generateThirdDistractor(secondWord, word3){
+function generateThirdDistracter(secondWord, word3){
     let wordLength = 0;
     let difference = 0;
-    let distractorWord = "";
-    let distractors = [[],[],[],[],[]]
+    let distracterWord = "";
+    let distracters = [[],[],[],[],[]]
     if (word3 === ""){
         secondWord = secondWord.slice(0,secondWord.length-1);
         wordLength =secondWord.length;
         for (let i = 0; i < dictionary.length; i++) {
-            distractorWord = dictionary[i];
+            distracterWord = dictionary[i];
             difference = 0;
-            if (distractorWord.length === wordLength && distractorWord.charAt(0) === secondWord.charAt(0)) {
+            if (distracterWord.length === wordLength && distracterWord.charAt(0) === secondWord.charAt(0)) {
+                distracters[4].push(distracterWord);
                 for (let j=1; j< wordLength; j++) {
-                    if (distractorWord.charAt(j) !== secondWord.charAt(j)) {
+                    if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
                         difference++;
                     }
                 }
-                if(difference === 0){
-                    distractors[0].push(distractorWord);
-                }
-                else if(difference === 1){
-                    distractors[1].push(distractorWord);
-                }
-                else if(difference === 2){
-                    distractors[2].push(distractorWord);
-                }
-                else if(difference === 3){
-                    distractors[3].push(distractorWord);
-                }
+                fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
             }
         }
         for(let i = 0; i<5; i++){
-            if(distractors[i].length === 0){}
+            if(distracters[i].length === 0){}
             else{
-                return distractors[i][0];
+                return distracters[i][0];
             }
         }
     }
     else{
         for (let i = 0; i < dictionary.length; i++) {
             wordLength = thirdWord.length;
-            distractorWord = dictionary[i];
+            distracterWord = dictionary[i];
             difference = 0;
-            if (distractorWord.length === wordLength && distractorWord.charAt(0) === thirdWord.charAt(0)) {
-                distractors[4].push(distractorWord);
-                if(distractorWord.charAt(wordLength-1) === thirdWord.charAt(wordLength-1)) {
+            if (distracterWord.length === wordLength && distracterWord.charAt(0) === thirdWord.charAt(0)) {
+                distracters[4].push(distracterWord);
+                if(distracterWord.charAt(wordLength-1) !== thirdWord.charAt(wordLength-1)) {
                     for (let j = 1; j < wordLength - 1; j++) {
-                        if (distractorWord.charAt(j) !== thirdWord.charAt(j)) {
+                        if (distracterWord.charAt(j) !== thirdWord.charAt(j)) {
                             difference++;
                         }
                     }
-                    if (difference === 2) {
-                        distractors[0].push(distractorWord);
-                    } else if (difference === 3) {
-                        distractors[1].push(distractorWord);
-                    } else if (difference === 1) {
-                        distractors[2].push(distractorWord);
-                    } else if (difference === 4) {
-                        distractors[3].push(distractorWord);
-                    }
+                    fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
                 }
             }
         }
+        for (let i = 0; i < distracters[4].length; i++) {
+            distracterWord = distracters[4][i];
+            difference = 0;
+            for (let j = 1; j < wordLength; j++) {
+                if (distracterWord.charAt(j) !== thirdWord.charAt(j)) {
+                    difference++;
+                }
+            }
+                fillingDistractersArrays(1,2,3,4,difference,distracters,distracterWord);
+        }
         for(let i=0 ; i<5; i++){
-            if(distractors[i].length === 0){}
+            if(distracters[i].length === 0){}
             else{
-                return distractors[i][0];
+                return distracters[i][0];
             }
         }
     }
 }
 
+
+function  makePositive(number){
+    if(number<0){
+        number = number * -1;
+    }
+    return number;
+}
 function shuffleArr (array){
     let pos = 0;
     for (let i = array.length - 1; i > 0; i--) {
         let rand = Math.floor(Math.random() * (i + 1));
         pos = array[i].arrayPosition;
-       array[i].arrayPosition = rand;
-       array[rand].arrayPosition = pos;
-       [array[i], array[rand]] = [array[rand], array[i]];
+        array[i].arrayPosition = rand;
+        array[rand].arrayPosition = pos;
+        [array[i], array[rand]] = [array[rand], array[i]];
     }
     return array;
 }
-function buildDistractor(style, word1, word2, word3){
+function buildDistracter(style, word1, word2, word3){
     let distractor = "";
         if (style === "Camelcase") {
             if(word3 !=="") {
@@ -560,16 +526,22 @@ function buildDistractor(style, word1, word2, word3){
         }
     return distractor;
 }
-function arrayPosition(modulo){
+function positionInArray(modulo){
     let position = rng.int32() %modulo;
-    if (position < 0) {
-        position = -1 * position;
-    }
+    position = makePositive(position);
     return position;
 }
- function exercise(){
-    showIdentifier();
 
- }
+function fillingDistractersArrays(A,B,C,D, difference, distracters, distracterWord){
+    if (difference === A) {
+        distracters[0].push(distracterWord);
+    } else if (difference === B) {
+        distracters[1].push(distracterWord);
+    } else if (difference === C) {
+        distracters[2].push(distracterWord);
+    } else if (difference === D) {
+        distracters[3].push(distracterWord);
+    }
+}
 
 
