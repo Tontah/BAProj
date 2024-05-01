@@ -37,7 +37,7 @@ let secondWord = "";
 let thirdWord = "";
 let breakMeasureStart = 0;
 let experimentRounds = 100;
-let roundsCompleted = 0;
+let roundsCompleted = 1;
 let roundsHeading = document.createElement("h1");
 
 
@@ -159,6 +159,7 @@ function enterKeyEvent(e){
     else if((e.key === "Enter" && experimentTitle.innerText === "BREAK TIME") || (e.key === "Enter" && experimentTitle.innerText === "TRAINING MODE COMPLETED")){
         experimentTitle.innerText = "REVISED CLOUD EXPERIMENT";
         identifierToStudy.innerHTML = "";
+        mainPage.innerHTML = "";
         roundsHeading.innerText = roundsCompleted + "/" + experimentRounds;
         roundsHeading.style.textAlign = "right";
         titlesClass.appendChild(roundsHeading);
@@ -191,13 +192,12 @@ function keydownEventHandler(e) {
     let answer = false;
     let arr = [];
     let rightAnswerPosition =0
-    mainPage.innerHTML = "";
 
-
-    if(expTitle=== "REVISED CLOUD EXPERIMENT" || expTitle.includes("TRAINING MODE")){
+    if(expTitle === "REVISED CLOUD EXPERIMENT" || expTitle.includes("TRAINING MODE")){
         e.preventDefault();
         return false;
     }
+
     if (e.key === "0") {
         experimentEndTime =Date.now();
         answer = (identifierAndDistractors[0].identifierValue === identifier);
@@ -216,7 +216,9 @@ function keydownEventHandler(e) {
     }
     else {e.preventDefault();
         return  false;
-        }
+    }
+    mainPage.innerHTML = "";
+
 
     if(mode.innerText === "training"){
             mainPage.hidden = false;
@@ -226,16 +228,17 @@ function keydownEventHandler(e) {
             identifier3.textContent = "";
             identifierToStudy.hidden = false;
             identifierToStudy.innerHTML = "";
-            if (camelCase + underScore === 30) {
+            roundsCompleted++;
+            roundsHeading.innerText = roundsCompleted + "/" + 30;
+            if (roundsCompleted === 30) {
                 experimentTitle.innerText = "TRAINING MODE COMPLETED";
                 mainPage.innerText = "Congratulations, you just completed the TRAINING.\n\n"+
                     "You can take a 10-15 minutes break now.\n\n"+
                     "Relax, drink a glass of water or a cup of coffee, or any drink.\n\n"+
                     "Then you press enter to proceed with the Experiment.\n\n";
-                camelCase = 0;
-                underScore = 0;
+              breakMeasureStart = camelCase = underScore = 0;
+                roundsCompleted = 1;
                 mode.innerText = "Experimenting";
-                breakMeasureStart = 0;
             } else {
                 experimentTitle.innerText = "TRAINING MODE";
                 showIdentifier();
@@ -311,6 +314,9 @@ function training(){
     "The middle finger on the two-key,\n\n"+
     "The ring finger on the three-key, and\n\n"+
     "The little finger on the enter-key.\n\n";
+    roundsHeading.innerText = roundsCompleted + "/" + "30";
+    roundsHeading.style.textAlign = "right";
+    titlesClass.appendChild(roundsHeading);
     showIdentifier();
 }
 
@@ -435,13 +441,21 @@ function generateThirdDistracter(secondWord, word3){
     let distracterWord = "";
     let distracters = [[],[],[],[],[]]
     if (word3 === ""){
+        let word = secondWord;
         secondWord = secondWord.slice(0,secondWord.length-1);
         wordLength =secondWord.length;
         for (let i = 0; i < dictionary.length; i++) {
             distracterWord = dictionary[i];
             difference = 0;
             if (distracterWord.length === wordLength && distracterWord.charAt(0) === secondWord.charAt(0)) {
-                distracters[4].push(distracterWord);
+                if(distracterWord.charAt(wordLength-1) === word.charAt(word.length-1)){
+                    for (let j=1; j< wordLength-1; j++) {
+                        if (secondWord.includes(distracterWord.charAt(j))) {}
+                            else difference++;
+                    }
+                    fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
+                }
+                else distracters[4].push(distracterWord);
                 for (let j=1; j< wordLength; j++) {
                     if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
                         difference++;
@@ -512,19 +526,19 @@ function shuffleArr (array){
     return array;
 }
 function buildDistracter(style, word1, word2, word3){
-    let distractor = "";
+    let distracter = "";
         if (style === "Camelcase") {
             if(word3 !=="") {
-                distractor = word1 + word2.charAt(0).toUpperCase() + word2.slice(1) + word3.charAt(0).toUpperCase() + word3.slice(1);
+                distracter = word1 + word2.charAt(0).toUpperCase() + word2.slice(1) + word3.charAt(0).toUpperCase() + word3.slice(1);
             }
-            else{ distractor = word1 + word2.charAt(0).toUpperCase() + word2.slice(1)}
+            else{ distracter = word1 + word2.charAt(0).toUpperCase() + word2.slice(1)}
         } else {
             if(word3 !=="") {
-                distractor = word1 + "_" + word2 + "_" + word3;
+                distracter = word1 + "_" + word2 + "_" + word3;
             }
-            else{distractor = word1 + "_" + word2;}
+            else{distracter = word1 + "_" + word2;}
         }
-    return distractor;
+    return distracter;
 }
 function positionInArray(modulo){
     let position = rng.int32() %modulo;
