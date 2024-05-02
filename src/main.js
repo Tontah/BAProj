@@ -8,7 +8,7 @@ function IdentifierAndAttributes(style, identifierValue, arrayPosition) {
     this.arrayPosition = arrayPosition;
 }
 let identifier = "";
-let identifierAndDistractors =[];
+let identifierAndDistracters =[];
 const mainPage = document.querySelector(".mainPage");
 let identifierToStudy  = document.querySelector(".identifierDiv h1");
 let nextButton = document.querySelector(".btn button");
@@ -36,7 +36,7 @@ let firstWord = "";
 let secondWord = "";
 let thirdWord = "";
 let breakMeasureStart = 0;
-let experimentRounds = 100;
+let experimentRounds = 20;
 let roundsCompleted = 1;
 let roundsHeading = document.createElement("h1");
 
@@ -53,7 +53,7 @@ mode.hidden = true
 function showIdentifier(){
     thirdWord = "";
     identifier = "";
-    identifierAndDistractors.length = 0;
+    identifierAndDistracters.length = 0;
     nextButton.disabled = true;
     nextButton.hidden = true;
     content.disabled = true;
@@ -65,7 +65,7 @@ function showIdentifier(){
         "press the number showing above the text with the identifier(containing the same phrases) that matches the sentence you just saw.\n\n"+
         "Then you press enter to proceed. The sentence will still be showing at the top of the page for reference.\n\n";
     style = identifierStyle[positionInArray(identifierStyle.length)];
-   numberOfWords = noOfWords[positionInArray(noOfWords.length)];
+   numberOfWords = 3//noOfWords[positionInArray(noOfWords.length)];
     for (let i = 0; i < numberOfWords; i++) {
         let word = words[positionInArray(words.length)];
         if(word.length>3) {
@@ -106,23 +106,24 @@ function showIdentifier(){
         underScore++;
     }
     else {camelCase++;}
-    identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistracter(style,
-        generateFirstDistracter(firstWord, thirdWord),secondWord,thirdWord)),identifierAndDistractors.length));
-    identifierAndDistractors.push(new IdentifierAndAttributes(style,(buildDistracter(style,firstWord,
-        generateSecondDistracter(secondWord, thirdWord),thirdWord)),identifierAndDistractors.length));
+
+
+    identifierAndDistracters.push(new IdentifierAndAttributes(style, (buildDistracter(style,
+        generateFirstDistracter(firstWord, thirdWord),secondWord,thirdWord)),identifierAndDistracters.length));
+    identifierAndDistracters.push(new IdentifierAndAttributes(style,(buildDistracter(style,firstWord,
+        generateSecondDistracter(secondWord, thirdWord),thirdWord)),identifierAndDistracters.length));
     if(numberOfWords === 2){
-        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistracter(style,firstWord,
-            generateThirdDistracter(secondWord, thirdWord), thirdWord)),identifierAndDistractors.length));
+        identifierAndDistracters.push(new IdentifierAndAttributes(style, (buildDistracter(style,firstWord,
+            generateThirdDistracter(secondWord, thirdWord), thirdWord)),identifierAndDistracters.length));
     }else {
-        identifierAndDistractors.push(new IdentifierAndAttributes(style, (buildDistracter(style,
-            firstWord, secondWord, generateThirdDistracter(secondWord, thirdWord))), identifierAndDistractors.length));
+        identifierAndDistracters.push(new IdentifierAndAttributes(style, (buildDistracter(style,
+            firstWord, secondWord, generateThirdDistracter(secondWord, thirdWord))), identifierAndDistracters.length));
     }
-    identifierAndDistractors.push(new IdentifierAndAttributes(style,identifier,identifierAndDistractors.length));
+    identifierAndDistracters.push(new IdentifierAndAttributes(style,identifier,identifierAndDistracters.length));
 
     let nodeForH1 = document.createTextNode(firstWord + " " + secondWord + " " + thirdWord);
     identifierToStudy.appendChild(nodeForH1);
 }
-
 
 
 //This button leads you the page with the game, while recording the time needed for the game to be ended.
@@ -133,7 +134,7 @@ function showGame(){
     experimentStartTime = Date.now();
     content.disabled = false;
     content.hidden = false;
-    let shuffledArray = shuffleArr(identifierAndDistractors);
+    let shuffledArray = shuffleArr(identifierAndDistracters);
     const elementArr = [identifier0, identifier1,identifier2, identifier3];
     for (let i = 0; i < elementArr.length; i++) {
         let para1 = document.createElement("p");
@@ -156,7 +157,9 @@ function enterKeyEvent(e){
         (e.key === "Enter" && nextButton.hidden === true && experimentTitle.innerText === "REVISED CLOUD EXPERIMENT")){
         showGame();
     }
-    else if((e.key === "Enter" && experimentTitle.innerText === "BREAK TIME") || (e.key === "Enter" && experimentTitle.innerText === "TRAINING MODE COMPLETED")){
+    else if((e.key === "Enter" && experimentTitle.innerText === "BREAK TIME") ||
+        (e.key === "Enter" && experimentTitle.innerText === "TRAINING MODE COMPLETED")||
+        (e.key === "Escape" && nextButton.hidden === false && experimentTitle.innerText === "REVISED CLOUD EXPERIMENT")){
         experimentTitle.innerText = "REVISED CLOUD EXPERIMENT";
         identifierToStudy.innerHTML = "";
         mainPage.innerHTML = "";
@@ -200,19 +203,19 @@ function keydownEventHandler(e) {
 
     if (e.key === "0") {
         experimentEndTime =Date.now();
-        answer = (identifierAndDistractors[0].identifierValue === identifier);
+        answer = (identifierAndDistracters[0].identifierValue === identifier);
     }
     else if (e.key === "1") {
         experimentEndTime =Date.now();
-        answer = (identifierAndDistractors[1].identifierValue === identifier);
+        answer = (identifierAndDistracters[1].identifierValue === identifier);
     }
     else if (e.key === "2") {
         experimentEndTime =Date.now();
-        answer = (identifierAndDistractors[2].identifierValue === identifier);
+        answer = (identifierAndDistracters[2].identifierValue === identifier);
     }
     else if (e.key === "3") {
         experimentEndTime =Date.now();
-        answer = (identifierAndDistractors[3].identifierValue === identifier);
+        answer = (identifierAndDistracters[3].identifierValue === identifier);
     }
     else {e.preventDefault();
         return  false;
@@ -245,9 +248,9 @@ function keydownEventHandler(e) {
             }
     }
     else {
-        for (let i = 0; i < identifierAndDistractors.length; i++) {
-            if (identifierAndDistractors[i].identifierValue === identifier) {
-                rightAnswerPosition = identifierAndDistractors[i].arrayPosition;
+        for (let i = 0; i < identifierAndDistracters.length; i++) {
+            if (identifierAndDistracters[i].identifierValue === identifier) {
+                rightAnswerPosition = identifierAndDistracters[i].arrayPosition;
                 break;
             }
         }
@@ -279,8 +282,7 @@ function keydownEventHandler(e) {
                 document.removeEventListener("keydown", enterKeyEvent);
                 mainPage.innerHTML = ("You have successfully completed the Experiment.\n\n" +
                     "Thank you for your participation.\n\n" +
-                    "Click on the button below to download your experiment results\n\n")
-                roundsHeading.innerText = roundsCompleted + "/" + experimentRounds;
+                    "Click on the button below to download your experiment results\n\n");
                 downloadButton.disabled = false;
                 downloadButton.hidden = false;
                 identifier0.hidden = true;
@@ -515,15 +517,22 @@ function  makePositive(number){
     return number;
 }
 function shuffleArr (array){
-    let pos = 0;
-    for (let i = array.length - 1; i > 0; i--) {
-        let rand = Math.floor(Math.random() * (i + 1));
-        pos = array[i].arrayPosition;
-        array[i].arrayPosition = rand;
-        array[rand].arrayPosition = pos;
-        [array[i], array[rand]] = [array[rand], array[i]];
+    let compare = "";
+    let arr = [];
+    let counter = 4;
+    let position = 0;
+    while (counter !== 0) {
+        position = positionInArray(4);
+        if (compare.includes(position.toString())) {}
+        else {
+            array[position].arrayPosition = arr.length;
+            arr.push(array[position]);
+            compare += position;
+            counter--;
+        }
     }
-    return array;
+    identifierAndDistracters = arr;
+    return arr;
 }
 function buildDistracter(style, word1, word2, word3){
     let distracter = "";
