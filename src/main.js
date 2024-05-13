@@ -23,10 +23,12 @@ let experimentEndTime = 0;
 let csvData = [["Style","Number of words","correct answer number","Key pressed","Answer","Time(ms)"]];
 let camelCase = 0;
 let underScore = 0;
+let twoWordIdentifier = 0;
+let threeWordIdentifier = 0;
 const identifierStyle = ["Camelcase", "Underscore"];
 const noOfWords = [2, 3];
 let csv = "";
-let rng = new Math.seedrandom("right");
+let rng = new Math.seedrandom("58796");
 let style = "";
 let numberOfWords =0;
 const identifier0 = document.querySelector(".identifier0");
@@ -67,6 +69,7 @@ function showIdentifier(){
         "Then you press enter to proceed. The sentence will still be showing at the top of the page for reference.\n\n";
     style = identifierStyle[positionInArray(identifierStyle.length)];
    numberOfWords = noOfWords[positionInArray(noOfWords.length)];
+   numberOfWords = checkNumberOfwords(numberOfWords);
     for (let i = 0; i < numberOfWords; i++) {
         let word = words[positionInArray(words.length)];
         if(word.length>3) {
@@ -191,6 +194,23 @@ downloadButton.addEventListener("click",()=> {
     hiddenElement.click();
 });
 
+
+function checkNumberOfwords(numWords){
+    if(numWords === 2){
+        if(twoWordIdentifier >= experimentRounds / 2){
+            numWords = 3;
+        }
+        else{ twoWordIdentifier++;}
+    }
+    else{
+        if(threeWordIdentifier >= experimentRounds / 2){
+            numWords = 2;
+        }
+        else{ threeWordIdentifier++;}
+    }
+    return numWords;
+}
+
 function keydownEventHandler(e) {
     let expTitle = experimentTitle.innerText;
     let answer = false;
@@ -240,7 +260,7 @@ function keydownEventHandler(e) {
                     "You can take a 10-15 minutes break now.\n\n"+
                     "Relax, drink a glass of water or a cup of coffee, or any drink.\n\n"+
                     "Then you press enter to proceed with the Experiment.\n\n";
-              breakMeasureStart = camelCase = underScore = 0;
+              breakMeasureStart = camelCase = underScore = twoWordIdentifier = threeWordIdentifier = 0;
                 roundsCompleted = 1;
                 mode.innerText = "Experimenting";
             } else {
