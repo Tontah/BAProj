@@ -44,7 +44,7 @@ export  const
         "cub",                  "cup",                  "current",              "curtain",              "curve",
         "cushion",              "dad",                  "daughter",             "day",                  "death",
         "debt",                 "decision",             "deer",                 "degree",               "design",
-        "desire",               "desk",                 "destruction",          "detail",               "development",
+        "desire",               "desk",                 "destruction",          "detail",
         "digestion",            "dime",                 "dinner",               "dinosaurs",            "direction",
         "dirt",                 "discovery",            "discussion",           "distance",             "distribution",
         "division",             "dock",                 "doctor",               "dog",                  "dogs",

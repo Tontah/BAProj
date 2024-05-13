@@ -352,20 +352,21 @@ function generateFirstDistracter(firstWord, thirdWord){
         for (let i = 0; i < dictionary.length; i++) {
             distracterWord = dictionary[i];
             difference = 0;
-            //changing the first word of the identifier
             if (distracterWord.length === wordLength && distracterWord.charAt(0) === firstWord.charAt(0)) {
+                distracters[4].push(distracterWord);
                 for (let j=1; j< wordLength; j++) {
                     if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
                         difference++;
                     }
                 }
                 fillingDistractersArrays(1,2,3,4,difference,distracters,distracterWord);
+                if(difference <= 4){ distracters[4].pop();}
             }
         }
         for(let i = 0; i<5; i++){
             if(distracters[i].length === 0){}
             else{
-                return distracters[i][0];
+                return distracters[i][positionInArray(distracters[i].length)];
             }
         }
     }
@@ -382,6 +383,7 @@ function generateFirstDistracter(firstWord, thirdWord){
                         }
                     }
                     fillingDistractersArrays(2,3,1,4,difference,distracters,distracterWord);
+                    if(difference <= 4){ distracters[4].pop();}
                 }
             }
         }
@@ -395,12 +397,13 @@ function generateFirstDistracter(firstWord, thirdWord){
                     }
                 }
                 fillingDistractersArrays(2,3,1,4,difference,distracters,distracterWord);
+                if(difference <= 4){ distracters[4].pop();}
             }
         }
         for(let i=0 ; i<5; i++){
             if(distracters[i].length === 0){}
             else{
-                return distracters[i][0];
+                return distracters[i][positionInArray(distracters[i].length)];
             }
         }
     }
@@ -423,12 +426,13 @@ function generateSecondDistracter(secondWord, thirdWord){
                     }
                 }
                 fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
+                if(difference <= 3){ distracters[4].pop();}
             }
-        }
+        }console.log(distracters)
         for(let i = 0; i<5; i++){
             if(distracters[i].length === 0){}
             else{
-                return distracters[i][0];
+                return distracters[i][positionInArray(distracters[i].length)];
             }
         }
     }
@@ -446,26 +450,28 @@ function generateSecondDistracter(secondWord, thirdWord){
                         }
                     }
                     fillingDistractersArrays(2, 3, 1, 4, difference, distracters, distracterWord);
+                    if(difference <= 4){ distracters[4].pop();}
                 }
             }
         }
-        console.log(distracters[4]);
         for (let i = 0; i < distracters[4].length; i++) {
             distracterWord = distracters[4][i];
             difference = 0;
             if (distracterWord.charAt(1) === secondWord.charAt(1)) {
                 for (let j = 2; j < distracterWord.length; j++) {
-                    if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
+                    if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
                         difference++;
                     }
                 }
                 fillingDistractersArrays(2,3,4,5,difference,distracters,distracterWord);
+                if(difference <= 5){ distracters[4].pop();}
             }
         }
+        console.log(distracters)
         for(let i =0 ; i<5; i++){
             if(distracters[i].length === 0){}
             else{
-                return distracters[i][0];
+                return distracters[i][positionInArray(distracters[i].length)];
             }
         }
     }
@@ -490,6 +496,7 @@ function generateThirdDistracter(secondWord, word3){
                             else difference++;
                     }
                     fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
+                    if(difference <= 3){ distracters[4].pop();}
                 }
                 else {
                     distracters[4].push(distracterWord);
@@ -502,10 +509,11 @@ function generateThirdDistracter(secondWord, word3){
                 }
             }
         }
+        console.log(distracters)
         for(let i = 0; i<5; i++){
             if(distracters[i].length === 0){}
             else{
-                return distracters[i][0];
+                return distracters[i][positionInArray(distracters[i].length)];
             }
         }
     }
@@ -523,6 +531,7 @@ function generateThirdDistracter(secondWord, word3){
                         }
                     }
                     fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
+                    if(difference <= 3){ distracters[4].pop();}
                 }
             }
         }
@@ -536,10 +545,11 @@ function generateThirdDistracter(secondWord, word3){
             }
                 fillingDistractersArrays(1,2,3,4,difference,distracters,distracterWord);
         }
+        console.log(distracters)
         for(let i=0 ; i<5; i++){
             if(distracters[i].length === 0){}
             else{
-                return distracters[i][0];
+                return distracters[i][positionInArray(distracters[i].length)];
             }
         }
     }
