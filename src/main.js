@@ -1,5 +1,6 @@
 import {words} from "./word.js";
 import {dictionary} from "./dictionary.js";
+console.log(dictionary.length);
 
 //constructor for identifierAndAttributes
 function IdentifierAndAttributes(style, identifierValue, arrayPosition) {
@@ -36,7 +37,7 @@ let firstWord = "";
 let secondWord = "";
 let thirdWord = "";
 let breakMeasureStart = 0;
-let experimentRounds = 20;
+let experimentRounds = 500;
 let roundsCompleted = 1;
 let roundsHeading = document.createElement("h1");
 
@@ -65,7 +66,7 @@ function showIdentifier(){
         "press the number showing above the text with the identifier(containing the same phrases) that matches the sentence you just saw.\n\n"+
         "Then you press enter to proceed. The sentence will still be showing at the top of the page for reference.\n\n";
     style = identifierStyle[positionInArray(identifierStyle.length)];
-   numberOfWords = 3//noOfWords[positionInArray(noOfWords.length)];
+   numberOfWords = noOfWords[positionInArray(noOfWords.length)];
     for (let i = 0; i < numberOfWords; i++) {
         let word = words[positionInArray(words.length)];
         if(word.length>3) {
@@ -364,18 +365,18 @@ function generateFirstDistracter(firstWord, thirdWord){
                 }
             }
         }
-            for (let i = 0; i < distracters[4].length; i++) {
-                distracterWord = distracters[4][i];
-                difference = 0;
-                if (distracterWord.charAt(1) === firstWord.charAt(1)) {
-                    for (let j = 2; j < wordLength; j++) {
-                        if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
-                            difference++;
-                        }
+        for (let i = 0; i < distracters[4].length; i++) {
+            distracterWord = distracters[4][i];
+            difference = 0;
+            if (distracterWord.charAt(1) === firstWord.charAt(1)) {
+                for (let j = 2; j < wordLength; j++) {
+                    if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
+                        difference++;
                     }
-                    fillingDistractersArrays(2,3,1,4,difference,distracters,distracterWord);
                 }
+                fillingDistractersArrays(2,3,1,4,difference,distracters,distracterWord);
             }
+        }
         for(let i=0 ; i<5; i++){
             if(distracters[i].length === 0){}
             else{
@@ -417,15 +418,28 @@ function generateSecondDistracter(secondWord, thirdWord){
             difference = 0;
             if (distracterWord.length === secondWord.length && distracterWord.charAt(0) === secondWord.charAt(0)) {
                 distracters[4].push(distracterWord);
-                if(distracterWord.charAt(wordLength-1) === secondWord.charAt(wordLength-1)) {
+                if (distracterWord.charAt(wordLength - 1) === secondWord.charAt(wordLength - 1)) {
                     for (let j = 1; j < wordLength - 1; j++) {
                         if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
                             // here i use difference to measure the similarity between the two words not the difference
                             difference++;
                         }
                     }
-                    fillingDistractersArrays(2,1,3,4,difference,distracters,distracterWord);
+                    fillingDistractersArrays(2, 3, 1, 4, difference, distracters, distracterWord);
                 }
+            }
+        }
+        console.log(distracters[4]);
+        for (let i = 0; i < distracters[4].length; i++) {
+            distracterWord = distracters[4][i];
+            difference = 0;
+            if (distracterWord.charAt(1) === secondWord.charAt(1)) {
+                for (let j = 2; j < distracterWord.length; j++) {
+                    if (distracterWord.charAt(j) !== firstWord.charAt(j)) {
+                        difference++;
+                    }
+                }
+                fillingDistractersArrays(2,3,4,5,difference,distracters,distracterWord);
             }
         }
         for(let i =0 ; i<5; i++){
@@ -457,13 +471,15 @@ function generateThirdDistracter(secondWord, word3){
                     }
                     fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
                 }
-                else distracters[4].push(distracterWord);
-                for (let j=1; j< wordLength; j++) {
-                    if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
-                        difference++;
+                else {
+                    distracters[4].push(distracterWord);
+                    for (let j = 1; j < wordLength; j++) {
+                        if (distracterWord.charAt(j) !== secondWord.charAt(j)) {
+                            difference++;
+                        }
                     }
+                    fillingDistractersArrays(0, 1, 2, 3, difference, distracters, distracterWord);
                 }
-                fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
             }
         }
         for(let i = 0; i<5; i++){
