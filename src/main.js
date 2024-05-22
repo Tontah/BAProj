@@ -1,6 +1,5 @@
 import {words} from "./word.js";
 import {dictionary} from "./dictionary.js";
-console.log(dictionary.length);
 
 //constructor for identifierAndAttributes
 function IdentifierAndAttributes(style, identifierValue, arrayPosition) {
@@ -23,8 +22,10 @@ let experimentEndTime = 0;
 let csvData = [["Style","Number of words","correct answer number","Key pressed","Answer","Time(ms)"]];
 let camelCase = 0;
 let underScore = 0;
-let twoWordIdentifier = 0;
-let threeWordIdentifier = 0;
+let twoWordIdentifierCC = 0;
+let threeWordIdentifierCC = 0;
+let twoWordIdentifierU = 0;
+let threeWordIdentifierU = 0;
 const identifierStyle = ["Camelcase", "Underscore"];
 const noOfWords = [2, 3];
 let csv = "";
@@ -42,7 +43,6 @@ let breakMeasureStart = 0;
 let experimentRounds = 500;
 let roundsCompleted = 1;
 let roundsHeading = document.createElement("h1");
-
 
 
 downloadButton.disabled = true;
@@ -65,15 +65,23 @@ function showIdentifier(){
         "Below, you will see a sentence, please study/memorize this.\n\n"+
         "place your fingers on the num keys as explained previously and keep your them there till the experiment ends.\n\n"+
         "On the next page,\n\n"+
-        "press the number showing above the text with the identifier(containing the same phrases) that matches the sentence you just saw.\n\n"+
+        "press the number showing above the text with the identifier(containing the same words) that matches the sentence you just saw.\n\n"+
         "Then you press enter to proceed. The sentence will still be showing at the top of the page for reference.\n\n";
     style = identifierStyle[positionInArray(identifierStyle.length)];
+    if (style === "Camelcase" && camelCase >= (experimentRounds / 2)) {
+        style = "Underscore";
+    }
+    else{
+        if (underScore >= (experimentRounds / 2)) {
+            style = "Camelcase";
+        }
+    }
    numberOfWords = noOfWords[positionInArray(noOfWords.length)];
-   numberOfWords = checkNumberOfwords(numberOfWords);
+   numberOfWords = checkNumberOfWords(numberOfWords, style);
     for (let i = 0; i < numberOfWords; i++) {
         let word = words[positionInArray(words.length)];
         if(word.length>3) {
-            if (style === "Camelcase" && camelCase < (experimentRounds/2)) {
+            if (style === "Camelcase") {
                 if (i !== 0) {
                     identifier = identifier + word.charAt(0).toUpperCase() + word.slice(1);
                     if (i === 1) {
@@ -84,11 +92,8 @@ function showIdentifier(){
                 } else {
                     identifier = word;
                     firstWord = word;
-                }
+                 }
             } else {
-                if (style === "Camelcase") {
-                    style = "Underscore";
-                }
                 if (i !== 0) {
                     identifier = identifier + "_" + word;
                     if (i === 1) {
@@ -195,21 +200,44 @@ downloadButton.addEventListener("click",()=> {
 });
 
 
-function checkNumberOfwords(numWords){
+function checkStyleAndNumWords(style,experimentRounds){
+    if(style === "Camelcase"){
+
+    }
+}
+function checkNumberOfWords(numWords, style){
     if(numWords === 2){
-        if(twoWordIdentifier >= experimentRounds / 2){
-            numWords = 3;
+        if(style === "Camelcase") {
+            if (twoWordIdentifierCC >= experimentRounds / 4) {
+                numWords = 3;
+            }
+            else {twoWordIdentifierCC++;}
         }
-        else{ twoWordIdentifier++;}
+        else {
+            if (twoWordIdentifierU >= experimentRounds / 4) {
+                numWords = 3;
+            }
+            else {twoWordIdentifierU++;}
+        }
     }
     else{
-        if(threeWordIdentifier >= experimentRounds / 2){
-            numWords = 2;
+        if(style === "Camelcase") {
+            if(threeWordIdentifierCC >= experimentRounds / 4){
+                numWords = 2;
+            }
+            else{ threeWordIdentifierCC++;}
         }
-        else{ threeWordIdentifier++;}
+        else {
+            if (threeWordIdentifierU >= experimentRounds / 4) {
+                numWords = 3;
+            } else {
+                threeWordIdentifierU++;
+            }
+        }
     }
     return numWords;
 }
+
 
 function keydownEventHandler(e) {
     let expTitle = experimentTitle.innerText;
@@ -260,7 +288,7 @@ function keydownEventHandler(e) {
                     "You can take a 10-15 minutes break now.\n\n"+
                     "Relax, drink a glass of water or a cup of coffee, or any drink.\n\n"+
                     "Then you press enter to proceed with the Experiment.\n\n";
-              breakMeasureStart = camelCase = underScore = twoWordIdentifier = threeWordIdentifier = 0;
+              breakMeasureStart = camelCase = underScore = twoWordIdentifierCC = threeWordIdentifierCC = twoWordIdentifierU = threeWordIdentifierU = 0;
                 roundsCompleted = 1;
                 mode.innerText = "Experimenting";
             } else {
@@ -428,7 +456,7 @@ function generateSecondDistracter(secondWord, thirdWord){
                 fillingDistractersArrays(0,1,2,3,difference,distracters,distracterWord);
                 if(difference <= 3){ distracters[4].pop();}
             }
-        }console.log(distracters)
+        }
         for(let i = 0; i<5; i++){
             if(distracters[i].length === 0){}
             else{
@@ -467,7 +495,6 @@ function generateSecondDistracter(secondWord, thirdWord){
                 if(difference <= 5){ distracters[4].pop();}
             }
         }
-        console.log(distracters)
         for(let i =0 ; i<5; i++){
             if(distracters[i].length === 0){}
             else{
@@ -509,7 +536,6 @@ function generateThirdDistracter(secondWord, word3){
                 }
             }
         }
-        console.log(distracters)
         for(let i = 0; i<5; i++){
             if(distracters[i].length === 0){}
             else{
@@ -545,7 +571,6 @@ function generateThirdDistracter(secondWord, word3){
             }
                 fillingDistractersArrays(1,2,3,4,difference,distracters,distracterWord);
         }
-        console.log(distracters)
         for(let i=0 ; i<5; i++){
             if(distracters[i].length === 0){}
             else{
