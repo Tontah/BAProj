@@ -29,7 +29,7 @@ let threeWordIdentifierU = 0;
 const identifierStyle = ["Camelcase", "Underscore"];
 const noOfWords = [2, 3];
 let csv = "";
-let rng = new Math.seedrandom("58796");
+let rng = new Math.seedrandom("85963217");
 let style = "";
 let numberOfWords =0;
 const identifier0 = document.querySelector(".identifier0");
@@ -587,19 +587,50 @@ function  makePositive(number){
     }
     return number;
 }
+
+let shuffeledIdentifierPos = "";
+let shuffeledIdentifierPosCounter = 0;
 function shuffleArr (array){
+    if(shuffeledIdentifierPosCounter === 8){
+        shuffeledIdentifierPosCounter =0;
+        shuffeledIdentifierPos = "";
+    }
     let compare = "";
     let arr = [];
     let counter = 4;
     let position = 0;
     while (counter !== 0) {
         position = positionInArray(4);
-        if (compare.includes(position.toString())) {}
+        let stringPos =position.toString();
+        if (compare.includes(stringPos)) {}
         else {
-            array[position].arrayPosition = arr.length;
-            arr.push(array[position]);
-            compare += position;
-            counter--;
+            if((array[position].identifierValue) === identifier){
+                let count = 0;
+                for (let i = 0; i < shuffeledIdentifierPos.length; i++) {
+                    if(shuffeledIdentifierPos.charAt(i) === (arr.length).toString() ){
+                        count++;
+                    }
+                }
+                if(count >= 2){
+                    counter = 4;
+                    compare = "";
+                    arr = [];
+                }
+                else{
+                    array[position].arrayPosition = arr.length;
+                    arr.push(array[position]);
+                    compare += position;
+                    shuffeledIdentifierPos += (arr.length-1)
+                    shuffeledIdentifierPosCounter++;
+                    counter--;
+                }
+            }
+            else{
+                array[position].arrayPosition = arr.length;
+                arr.push(array[position]);
+                compare += position;
+                counter--;
+            }
         }
     }
     identifierAndDistracters = arr;
